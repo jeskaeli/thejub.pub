@@ -12,6 +12,10 @@ html(lang="en")
     br
     p Welcome to #{title} game server
     br
+    // game content
+    block content
+
+    // chat window
     ul(id="messages")
     form(id="chat", action='')
       input(id='m', autocomplete='off')
@@ -27,4 +31,3 @@ html(lang="en")
         $('#messages').append($('<li>').text(msg));
         $('#messages')[0].scrollTop = $('#messages')[0].scrollHeight;
       });
-    block content

@@ -13,7 +13,9 @@ module.exports = function(app, io) {
       // Send message up to the app
       app.new_msg(msg);
       // Echo message back to clients
-      io.emit('chat message', msg);
+      if (msg.length > 0) {
+        io.emit('chat message', msg);
+      }
     });
   });
 };
