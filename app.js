@@ -58,7 +58,7 @@ app.use(function(err, req, res, next) {
 });
 
 // TODO this should be a game maker, not a game
-app.game = require('./for_sale')(2);
+app.game = require('./jub_dj')({});
 
 app.new_msg = function(msg) {
   console.log("app received: %s", msg);

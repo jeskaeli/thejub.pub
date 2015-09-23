@@ -10,12 +10,13 @@ html(lang="en")
     link(rel='stylesheet', href='/stylesheets/style.css')
     h1= title
     br
-    p Welcome to #{title} game server
+    p Welcome to #{title}
     br
-    // game content
+    // page content
     block content
 
-    // chat window
+    // chat window TODO move this into its own file
+    div Chat!
     ul(id="messages")
     form(id="chat", action='')
       input(id='m', autocomplete='off')
