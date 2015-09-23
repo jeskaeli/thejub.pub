@@ -3,32 +3,41 @@ html(lang="en")
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/bootstrap.css')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel="icon", type="image/x-icon", href="/favicon.ico")
     script(src="/javascripts/jquery.js")
     script(src="/javascripts/bootstrap.js")
     script(src="https://cdn.socket.io/socket.io-1.3.5.js")
   body
-    link(rel='stylesheet', href='/stylesheets/style.css')
-    h1= title
-    br
-    p Welcome to #{title}
-    br
-    // page content
-    block content
+    div(class='container-fluid')
+      div(class='page-header')
+        h1= title
+        p Welcome to #{title}
+      div(class='row')
+        div(class='col-md-2')
+          h2 menu?
+        // video area
+        div(class='col-md-7')
+          block content
 
-    // chat window TODO move this into its own file
-    div Chat!
-    ul(id="messages")
-    form(id="chat", action='')
-      input(id='m', autocomplete='off')
-      button Send
-    script.
-      var socket = io();
-      $('form').submit(function() {
-        socket.emit('chat message', $('#m').val());
-        $('#m').val('');
-        return false;
-      });
-      socket.on('chat message', function(msg) {
-        $('#messages').append($('<li>').text(msg));
-        $('#messages')[0].scrollTop = $('#messages')[0].scrollHeight;
-      });
+        // chat window TODO move this into its own file
+        div(class='col-md-3')
+          div Chat!
+          ul(id="messages")
+          div(class='row')
+            form(class='form-inline', id="chat", action='')
+              div(class='col-md-10')
+                input(class='form-control', id='m', autocomplete='on')
+              div(class='col-md-2')
+                button(class='btn btn-default') Send
+          script.
+            var socket = io();
+            $('form').submit(function() {
+              socket.emit('chat message', $('#m').val());
+              $('#m').val('');
+              return false;
+            });
+            socket.on('chat message', function(msg) {
+              $('#messages').append($('<li>').text(msg));
+              $('#messages')[0].scrollTop = $('#messages')[0].scrollHeight;
+            });

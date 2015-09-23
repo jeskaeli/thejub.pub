@@ -1,7 +1,7 @@
 * { box-sizing: border-box; }
 
 body {
-  padding: 5px 5px;
+  /* padding: 5px 5px; */
   /* font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; */
 }
 
@@ -9,12 +9,31 @@ a {
   color: #00B7FF;
 }
 
-#chat { background: #333; padding: 2px; position: fixed; bottom: 0; width: 99%; }
-#chat input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-#chat button { width: 9%; background: rgb(150, 170, 175); border: 2px; padding: 10px; }
+
+#chat {
+  /* background: #333; */
+  position: fixed;
+  bottom: 10px;
+}
+/*
+#chat input {
+  border: 0;
+  padding: 10px;
+}
+
+#chat .col-md-2 {
+  padding: 0;
+}
+
+#chat button {
+  background: rgb(150, 170, 175);
+  border: 2px;
+  padding: 10px;
+}
+*/
 
 /* specific style for messages li */
 #messages { list-style-type: none; margin: 0; padding: 0; }
-#messages { max-height: 200px; overflow-y:auto; }
+#messages { max-height: 500px; overflow-y:auto; }
 #messages li { padding: 5px 10px; }
 #messages li:nth-child(odd) { background: #eee; }
