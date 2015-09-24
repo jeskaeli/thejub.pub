@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
+var config = require('./config');
 var app = express();
 
 // view engine setup
@@ -16,7 +17,7 @@ app.set('view engine', 'jade');
 app.locals.pretty = true;
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -57,12 +58,12 @@ app.use(function(err, req, res, next) {
   });
 });
 
-// TODO this should be a game maker, not a game
-app.game = require('./jub_dj')({});
+app.db = require('./db')(config);
+app.main = require('./jub_dj')(config);
 
 app.new_msg = function(msg) {
   console.log("app received: %s", msg);
-  app.game.update_state(msg);
+  app.main.update_state(msg);
 }
 
 module.exports = app;

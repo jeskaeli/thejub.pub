@@ -12,6 +12,7 @@ a {
 
 #chat {
   /* background: #333; */
+  border: 1;
   position: fixed;
   bottom: 10px;
 }

@@ -1,7 +1,7 @@
 var util = require('util');
 
-function JubDJ(init_state) {
-  this.state = init_state;
+function JubDJ(config) {
+  this.state = {};
 
   console.log("jub.dj: %s", util.inspect(this));
 
@@ -10,6 +10,6 @@ function JubDJ(init_state) {
   }
 }
 
-module.exports = function(state) {
-  return new JubDJ(state); //TODO all args
+module.exports = function(config) {
+  return new JubDJ(config); //TODO all args
 }
