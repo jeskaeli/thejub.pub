@@ -58,8 +58,18 @@ app.use(function(err, req, res, next) {
   });
 });
 
-app.db = require('./db')(config);
+app.auth = require('./auth')(config);
+app.models = require('./models')(config, app.auth);
+app.db = require('./db')(config, app.models);
 app.main = require('./jub_dj')(config);
+
+/* TODO scratch */
+var token = app.auth.gen_token(function(token) {
+  console.log("generated token:", token);
+  console.log("encoded token:", app.auth.encode_token(token));
+  app.db.store_auth('123456abcdef', token, 1);
+});
+/* scratch over */
 
 app.new_msg = function(msg) {
   console.log("app received: %s", msg);
