@@ -2,17 +2,33 @@ extends layout
 
 block video_block
   div(id="player")
-  form(class='form-group', id='play_video', action='')
-    div(class='col-md-2')
-      label(for='video_id') Play Video
-    div(class='col-md-5')
-      input(class='form-control', id='video_id',
-        style='margin:0 0 10px 0;')
-    div(class='col-md-2')
-      button(class='btn btn-default') Submit
+  div(class='row')
+    form(class='form-group', id='play_video', action='')
+      div(class='col-md-1')
+        label(for='video_id') Play Video
+      div(class='col-md-5')
+        input(class='form-control', id='video_id',
+          style='margin:0 0 10px 0;')
+      div(class='col-md-2')
+        button(class='btn btn-default') Submit
+      div(class='col-md-2')
+        button(class='btn btn-default', id='mute') mute
   script.
 
     var my_video_state = {};
+
+    // Client text box for submitting a video
+    $('#mute').on('click', function(e) {
+      e.preventDefault(); // TODO needed?
+      console.log('mute');
+      if (player.isMuted()) {
+        player.unMute();
+      }
+      else {
+        player.mute();
+      }
+      return false;
+    });
 
     // Client text box for submitting a video
     $('#play_video').submit(function() {
