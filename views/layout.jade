@@ -7,6 +7,14 @@ html(lang="en")
     script(src="/javascripts/jquery.js")
     script(src="/javascripts/bootstrap.js")
     script(src="https://cdn.socket.io/socket.io-1.3.5.js")
+    script.
+      // TODO put this somewhere else or load someone else's
+      function get_cookie(name) {
+        var value = "; " + document.cookie;
+        var parts = value.split("; " + name + "=");
+        if (parts.length == 2) return parts.pop().split(";").shift();
+      }
+      var socket = io();
   body
     div(class='container-fluid')
       div(class='page-header')
@@ -14,25 +22,47 @@ html(lang="en")
         p Welcome to #{title}
       div(class='row')
         div(class='col-md-2')
-          h2 menu?
+          div(class='row')
+            form(class='form-group', id='auth', action='')
+              div(class='col-xs-12')
+                label(for='username') Username
+                input(class='form-control', id='username',
+                      style='margin:0 0 10px 0;')
+                button(class='btn btn-default') Submit
+          script.
+            $('#auth').submit(function() {
+              var username = $('#username').val();
+              console.log('submitting username', username);
+              $.post('/username', username, function(data) {
+                console.log('server responded', data);
+                document.cookie = 'username=' + username;
+              });
+              return false;
+            });
+
         // video area
         div(class='col-md-7')
-          block content
+          block video_block
 
         // chat window TODO move this into its own file
         div(class='col-md-3')
-          div Chat!
           ul(id="messages")
           div(class='row')
-            form(class='form-inline', id="chat", action='')
+            form(class='form-inline', id='chat', action='')
               div(class='col-md-10')
-                input(class='form-control', id='m', autocomplete='on')
+                input(class='form-control', id='m')
               div(class='col-md-2')
                 button(class='btn btn-default') Send
           script.
-            var socket = io();
-            $('form').submit(function() {
-              socket.emit('chat message', $('#m').val());
+            $('#chat').submit(function() {
+              var msg = $('#m').val();
+              var username = get_cookie('username');
+              console.log("message: ", username, ":", msg);
+              socket.emit('chat message', {
+                username: username,
+                text: msg
+              });
+              //socket.emit('chat message', msg);
               $('#m').val('');
               return false;
             });

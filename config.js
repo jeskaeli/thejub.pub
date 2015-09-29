@@ -1,6 +1,6 @@
 var config = {};
 
-config.mongodb_endpoint = 'mongodb://localhost';
+config.mongodb_endpoint = 'mongodb://botcoin';
 config.mongodb_db = 'jub-dj';
 config.auth = {
   token_len: '20'

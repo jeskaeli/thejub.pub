@@ -8,4 +8,9 @@ router.get('/', function(req, res, next) {
   });
 });
 
+// TODO not really using this
+router.post('/username', function(req, res, next) {
+  res.send('username post received');
+});
+
 module.exports = router;

@@ -13,10 +13,30 @@ module.exports = function(app, io) {
       // Send message up to the app
       app.new_msg(msg);
       // Echo message back to clients
-      if (msg.length > 0) {
-        io.emit('chat message', msg);
+      if (msg['text']) {
+        var formatted = msg['text']
+        if (msg['username']) {
+          formatted = msg['username'] + ": " + formatted;
+        }
+        io.emit('chat message', formatted);
       }
     });
+
+    socket.on('video submit', function(video_id) {
+      app.update_video_state({
+        id: video_id,
+        start_time: Date.now()
+      });
+      // Send new state to all clients
+      io.emit('video state', app.jub.emittable_state());
+    });
+
+    socket.on('request video state', function(video_id) {
+      console.log('client requested video state', socket.conn.remoteAddress);
+      // Send new state to all clients
+      io.emit('video state', app.jub.emittable_state());
+    });
+
   });
 };
 
