@@ -62,6 +62,7 @@ app.auth = require('./auth')(config);
 app.models = require('./models')(config, app.auth);
 app.db = require('./db')(config, app.models);
 app.jub = require('./jub_dj')(config);
+app.config = config;
 
 /* TODO scratch */
 var token = app.auth.gen_token(function(token) {
@@ -71,13 +72,6 @@ var token = app.auth.gen_token(function(token) {
 });
 /* scratch over */
 
-app.new_msg = function(msg) {
-  console.log("received chat message", msg['text']);
-}
 
-app.update_video_state = function(video_id) {
-  console.log("Playing video", video_id);
-  app.jub.update_video_state(video_id);
-}
 
 module.exports = app;

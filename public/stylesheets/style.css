@@ -14,7 +14,7 @@ a {
   /* background: #333; */
   border: 1;
   position: fixed;
-  bottom: 100px;
+  bottom: 50px;
 }
 /*
 #chat input {
@@ -38,3 +38,7 @@ a {
 #messages { max-height: 500px; overflow-y:auto; }
 #messages li { padding: 5px 10px; }
 #messages li:nth-child(odd) { background: #eee; }
+
+#current-users { list-style-type: none; margin: 0; padding: 0; }
+#current-users { max-height: 200px; overflow-y:auto; }
+
