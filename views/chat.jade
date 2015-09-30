@@ -1,0 +1,24 @@
+ul(id="messages")
+div(class='row')
+  form(class='form-inline', id='chat', action='')
+    div(class='col-md-10')
+      input(class='form-control', id='m')
+    div(class='col-md-2')
+      button(class='btn btn-default') Send
+script.
+  $('#chat').submit(function() {
+    var msg = $('#m').val();
+    var username = get_cookie('username');
+    console.log("message: ", username, ":", msg);
+    socket.emit('chat message', {
+      username: username,
+      text: msg
+    });
+    //socket.emit('chat message', msg);
+    $('#m').val('');
+    return false;
+  });
+  socket.on('chat message', function(msg) {
+    $('#messages').append($('<li>').text(msg));
+    $('#messages')[0].scrollTop = $('#messages')[0].scrollHeight;
+  });

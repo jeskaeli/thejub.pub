@@ -1,0 +1,17 @@
+div(class='row')
+  form(class='form-group', id='auth', action='')
+    div(class='col-xs-12')
+      label(for='username') Username
+      input(class='form-control', id='username',
+            style='margin:0 0 10px 0;')
+      button(class='btn btn-default') Submit
+script.
+  $('#auth').submit(function() {
+    var username = $('#username').val();
+    console.log('submitting username', username);
+    $.post('/username', username, function(data) {
+      console.log('server responded', data);
+      document.cookie = 'username=' + username;
+    });
+    return false;
+  });
