@@ -20,13 +20,11 @@ function Socketeer(jub, config, io) {
 
     // User connected ('connection' above)
     console.log('client connected: %s', socket.conn.remoteAddress);
-    emit_chat(io, 'Someone connected.');
     refresh_users(io, jub);
 
     // User disconnected
     socket.on('disconnect', function() {
       console.log('user disconnected: %s', socket.client);
-      emit_chat(io, 'Someone disconnected.');
       refresh_users(io, jub);
     });
 
