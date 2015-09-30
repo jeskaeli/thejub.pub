@@ -34,7 +34,7 @@ script.
 
   // Document is loaded so cookies are probably ready
   $( document ).ready(function() {
-    socket.emit('user update', user);
+    socket.emit('user update', 0);
   });
 
   // Server is asking who is present
