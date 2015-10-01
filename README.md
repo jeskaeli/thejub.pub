@@ -8,7 +8,7 @@ chat + shared video
  * http://www.sitepoint.com/beginners-guide-node-package-manager/
 3. Install the dependencies:
 ```
-$ cd jub.js
+$ cd jub.dj
 $ npm install
 ````
 4. Start the server: 
