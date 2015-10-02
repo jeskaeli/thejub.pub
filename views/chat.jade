@@ -9,12 +9,16 @@ script.
   $('#chat').submit(function() {
     var msg = $('#m').val();
     var username = get_cookie('username');
-    console.log("message: ", username, ":", msg);
-    socket.emit('chat message', {
-      username: username,
-      text: msg
-    });
-    $('#m').val('');
+    if (username == '') {
+      alert('You must be logged in to chat.')
+    } else {
+      console.log("message: ", username, ":", msg);
+      socket.emit('chat message', {
+        username: username,
+        text: msg
+      });
+    }
+      $('#m').val('');
     return false;
   });
   socket.on('chat message', function(msg) {
