@@ -9,6 +9,10 @@ div(class='row')
       br
       label(for='current-users') Who's on first:
       ul(id='current-users')
+div(class='row', style='bottom:30px; position:fixed;')
+  div(class='col-xs-12')
+    a(href='https://github.com/aromatt/jub.dj/issues',
+      target="_blank") Report bug or request feature
 script.
   $('#auth').submit(function() {
     var username = $('#username').val();
