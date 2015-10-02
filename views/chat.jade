@@ -2,12 +2,13 @@ ul(id="messages")
 div(class='row')
   form(class='form-inline', id='chat', action='')
     div(class='col-md-10')
-      input(class='form-control', id='m')
+      input(class='form-control', id='chat-input',
+            style='width: 100%;')
     div(class='col-md-2')
       button(class='btn btn-default') Send
 script.
   $('#chat').submit(function() {
-    var msg = $('#m').val();
+    var msg = $('#chat-input').val();
     var username = get_cookie('username');
     if (username == '') {
       alert('You must be logged in to chat.')
@@ -17,7 +18,7 @@ script.
         text: msg
       });
     }
-      $('#m').val('');
+      $('#chat-input').val('');
     return false;
   });
   socket.on('chat message', function(msg_obj) {

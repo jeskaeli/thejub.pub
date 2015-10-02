@@ -1,14 +1,47 @@
 * { box-sizing: border-box; }
 
-body {
-  /* padding: 5px 5px; */
-  /* font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; */
-}
-
 a {
-  color: #00B7FF;
+  color: #0097AA;
 }
 
+html {
+}
+
+.page-header {
+  margin-top: 20px;
+}
+
+body {
+  font-size: 14px;
+  background-color: #181818;
+  /*background-image:url(/images/snowy.jog);
+  background-position: left top;
+  background-repeat: no-repeat; */
+  color: #DDDDEE;
+  height: 100%;
+}
+
+.form-control {
+  background-color: #222222;
+  color: #BBBBBB;
+  font-size: 14px;
+}
+
+.btn {
+  background-color: #3F2C52;
+  color: #fff;
+  border-color: #3F2C52;
+  font-size: 14px;
+}
+
+.flex-centered {
+  float: none;
+  margin: 25px auto;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display:         flex;
+}
 
 #chat {
   /* background: #333; */
@@ -36,8 +69,12 @@ a {
 /* specific style for messages li */
 #messages { list-style-type: none; margin: 0; padding: 0; }
 #messages { max-height: 500px; overflow-y:auto; }
-#messages li { padding: 5px 10px; }
-#messages li:nth-child(odd) { background: #eee; }
+#messages li {
+  padding: 5px 10px;
+  background: #111;
+  font-size: 14px;
+}
+#messages li:nth-child(odd) { background: #222; }
 
 #current-users { list-style-type: none; margin: 0; padding: 0; }
 #current-users { max-height: 200px; overflow-y:auto; }

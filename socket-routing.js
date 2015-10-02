@@ -28,7 +28,7 @@ function transform_chat(msg_obj) {
   var emph = false;
   if (msg_obj['username']) {
     if (formatted.startsWith('/me ')) {
-      formatted = '* ' + msg_obj['username'] + ' ' +
+      formatted = msg_obj['username'] + ' ' +
                   formatted.substring(3, formatted.length);
       emph = true;
     } else {
