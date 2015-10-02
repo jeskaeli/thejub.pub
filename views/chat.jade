@@ -12,7 +12,6 @@ script.
     if (username == '') {
       alert('You must be logged in to chat.')
     } else {
-      console.log("message: ", username, ":", msg);
       socket.emit('chat message', {
         username: username,
         text: msg
@@ -21,7 +20,11 @@ script.
       $('#m').val('');
     return false;
   });
-  socket.on('chat message', function(msg) {
-    $('#messages').append($('<li>').text(msg));
+  socket.on('chat message', function(msg_obj) {
+    var new_item = $('<li>').text(msg_obj['text']);
+    if (msg_obj['emph']) {
+      new_item.css('font-style', 'italic');
+    }
+    $('#messages').append(new_item);
     $('#messages')[0].scrollTop = $('#messages')[0].scrollHeight;
   });
