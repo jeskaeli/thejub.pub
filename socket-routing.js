@@ -89,11 +89,17 @@ function Socketeer(jub, config, io) {
     // Request video state
     socket.on('request video state', function(video_id) {
       console.log('client requested video state', socket.conn.remoteAddress);
-      // Send new state to all clients
-      io.emit('video state', jub.emittable_state());
+      // Send new state to that client
+      socket.emit('video state', jub.emittable_state());
     });
 
-
+    // Video search
+    socket.on('video search', function(query) {
+      console.log('searching for', query);
+      jub.video_search(query, function(results) {
+        socket.emit('video search results', results);
+      });
+    });
   });
 }
 

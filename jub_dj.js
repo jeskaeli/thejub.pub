@@ -1,7 +1,8 @@
 var util = require('util');
 var Set = require("collections/set");
 
-function JubDJ(config) {
+function JubDJ(config, youtube) {
+  this.youtube = youtube;
   this.video_state = {
     id: 'ELAs5Q8Itfs', // TODO different placeholder
     start_time: Date.now()
@@ -34,8 +35,12 @@ function JubDJ(config) {
     this.current_users.add(user);
     callback(this.current_users.toArray());
   }
+
+  this.video_search = function(query, callback) {
+    this.youtube.video_search(query, callback);
+  };
 }
 
-module.exports = function(config) {
-  return new JubDJ(config); //TODO all args
+module.exports = function(config, youtube) {
+  return new JubDJ(config, youtube);
 }

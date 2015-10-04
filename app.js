@@ -25,7 +25,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-app.use('/users', users);
+app.use('/users', users); // TODO
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -61,15 +61,31 @@ app.use(function(err, req, res, next) {
 app.auth = require('./auth')(config);
 app.models = require('./models')(config, app.auth);
 app.db = require('./db')(config, app.models);
-app.jub = require('./jub_dj')(config);
+app.youtube = require('./youtube')(config);
+app.jub = require('./jub_dj')(config, app.youtube);
 app.config = config;
 
 /* TODO scratch */
+function xinspect(o,i){
+  if(typeof i=='undefined')i='';
+  if(i.length>50)return '[MAX ITERATIONS]';
+  var r=[];
+  for(var p in o){
+    var t=typeof o[p];
+    r.push(i+p+' ('+t+'): '+(t=='object' ? 'object:'+xinspect(o[p],i+'  ') : o[p]+''));
+  }
+  return r.join(i+'\n');
+}
+
 var token = app.auth.gen_token(function(token) {
   console.log("generated token:", token);
   console.log("encoded token:", app.auth.encode_token(token));
   app.db.store_auth('123456abcdef', token, 1);
 });
+
+//app.youtube.video_search("Marc papeghin epic ff8 medley", function(results) {
+//  console.log("Result:", xinspect(results[0]));
+//});
 /* scratch over */
 
 

@@ -3,9 +3,10 @@ div(class='row')
   form(class='form-inline', id='chat', action='')
     div(class='col-md-10')
       input(class='form-control', id='chat-input',
-            style='width: 100%;')
+            style='width: 100%;', autocomplete='off')
     div(class='col-md-2')
       button(class='btn btn-default') Send
+
 script.
   $('#chat').submit(function() {
     var msg = $('#chat-input').val();
@@ -18,7 +19,7 @@ script.
         text: msg
       });
     }
-      $('#chat-input').val('');
+    $('#chat-input').val('');
     return false;
   });
   socket.on('chat message', function(msg_obj) {

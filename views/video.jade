@@ -5,7 +5,7 @@ div(class='not-flex-centered')
     form(class='form-group', id='play_video', action='')
       div(class='col-md-5')
         input(class='form-control', id='video_id',
-          style='margin:0 0 10px 0;', placeholder='Play video')
+          style='margin:0 0 10px 0;', placeholder='Search for a video')
       div(class='col-md-2')
         button(class='btn btn-default') Submit
       div(class='col-md-2')
@@ -15,11 +15,104 @@ div(class='not-flex-centered')
 script.
 
   var my_video_state = {};
+  var current_search_results = [];
+  var MAX_RESULTS = 7;
+  var MAX_PRETTY_LEN = 60;
+
+  // e.g. "michelleheafy: Some cool video about someth..."
+  function prettify_result(result) {
+    var artist = result.snippet.channelTitle
+    var pretty = artist + ": " + result.snippet.title;
+    if (pretty.length > MAX_PRETTY_LEN) {
+      pretty = pretty.slice(0, MAX_PRETTY_LEN - 3) + "...";
+    }
+    return pretty
+  }
+
+  // Take in youtube search result items and turn them into an array of objects
+  // that autocomplete can handle, truncating the list in the process
+  function transform_search_results(results) {
+    return results.slice(0, MAX_RESULTS).map(function(result) {
+      return {
+        label: prettify_result(result),
+        value: result.id.videoId
+      }
+    });
+  }
+
+  // As the user types in a video, send video search requests to the server
+  // TODO do this from the client
+  $('#video_id').on('input', function(e) {
+    var query = $(e.target).context.value;
+    console.log('sending video search to server:', query);
+    socket.emit('video search', query);
+    return false;
+  });
+
+  $('#video_id').autocomplete({
+    source: function(request, response) {
+      response(current_search_results);
+    },
+    focus: function(event, ui) {
+      console.log('focus', ui);
+      console.log(event);
+      $('#video_id').val(ui.item.label);
+      return false;
+    },
+    select: function(event, ui) {
+      var event = jQuery.Event("submit");
+      event.video_id = ui.item.value;
+      $('#play_video').trigger(event);
+      return false;
+    }
+  });
+
+  // When the server sends us search results, update our local map and show
+  // them to the user
+  socket.on('video search results', function(results) {
+    current_search_results = transform_search_results(results);
+  });
 
   // Client text box for submitting a video
+  $('#play_video').submit(function(event) {
+    var video_id = event.video_id;
+    console.log('passed-in video_id from event:', video_id);
+    if (video_id == undefined) {
+      video_id = $('#video_id').val();
+    }
+    socket.emit('video submit', video_id);
+    $('#video_id').val('');
+    return false;
+  });
+
+  // Start the specified video, starting at the correct time
+  function apply_video_state(state) {
+    id =  state['id'];
+    start_time =  state['start_time'];
+    if (my_video_state['id'] != id ||
+        my_video_state['start_time'] != start_time) {
+      my_video_state = {
+        id: id,
+        start_time: start_time
+      };
+      video_progress = (state['server_time'] - start_time) / 1000;
+      console.log("apply video state", id, video_progress);
+      player.loadVideoById({
+        'videoId': id,
+        'startSeconds': video_progress,
+        'suggestedQuality': 'large'
+      });
+    }
+  }
+
+  // Server tells us about video state changes
+  socket.on('video state', function(video_state) {
+    apply_video_state(video_state);
+  });
+
+  // Mute button
   $('#mute').on('click', function(e) {
     e.preventDefault();
-    console.log('mute');
     if (player.isMuted()) {
       player.unMute();
       $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-up');
@@ -29,18 +122,6 @@ script.
       $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-off');
     }
     return false;
-  });
-
-  // Client text box for submitting a video
-  $('#play_video').submit(function() {
-    var video_id = $('#video_id').val();
-    socket.emit('video submit', video_id);
-    return false;
-  });
-
-  // Server tells us about video state changes
-  socket.on('video state', function(video_state) {
-    apply_video_state(video_state);
   });
 
   // Load the IFrame Player API code, asynchronously
@@ -89,21 +170,4 @@ script.
     }
   }
 
-  function apply_video_state(state) {
-    id =  state['id'];
-    start_time =  state['start_time'];
-    if (my_video_state['id'] != id ||
-        my_video_state['start_time'] != start_time) {
-      my_video_state = {
-        id: id,
-        start_time: start_time
-      };
-      video_progress = (state['server_time'] - start_time) / 1000;
-      console.log("apply video state", id, video_progress);
-      player.loadVideoById({
-        'videoId': id,
-        'startSeconds': video_progress,
-        'suggestedQuality': 'large'
-      });
-    }
-  }
+

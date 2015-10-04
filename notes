@@ -6,3 +6,6 @@ Username and password
 
 Authentication for the websockets
   https://devcenter.heroku.com/articles/websocket-security
+
+Using google's Youtube APIs from the client
+  https://developers.google.com/youtube/v3/guides/auth/client-side-web-apps?hl=en

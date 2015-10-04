@@ -3,12 +3,6 @@ html(lang="en")
   head
     include ./head.jade
     script.
-      // TODO put this somewhere else or load someone else's cookie fns
-      function get_cookie(name) {
-        var value = "; " + document.cookie;
-        var parts = value.split("; " + name + "=");
-        if (parts.length == 2) return parts.pop().split(";").shift();
-      }
       var socket = io();
   body
     div(class='container-fluid')
@@ -23,4 +17,3 @@ html(lang="en")
 
         div(class='col-md-3')
           include ./chat.jade
-
