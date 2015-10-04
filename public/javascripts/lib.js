@@ -18,3 +18,10 @@ function get_cookie(name) {
   if (parts.length == 2) return parts.pop().split(";").shift();
 }
 
+// patch String with #startsWith
+if ( typeof String.prototype.startsWith != 'function' ) {
+  String.prototype.startsWith = function( str ) {
+    return this.substring( 0, str.length ) === str;
+  }
+};
+
