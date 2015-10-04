@@ -19,7 +19,13 @@ function Youtube(config) {
     // Returns an array of result items with this structure:
     //   https://developers.google.com/youtube/v3/docs/search/list#response
     this.youtube.search.list(params, function(err, resp) {
-      callback(resp['items']);
+      if (err) {
+        console.log('error', err);
+      }
+      if (resp && resp['items']) {
+        console.log('returning results');
+        callback(resp['items']);
+      }
     });
   };
 

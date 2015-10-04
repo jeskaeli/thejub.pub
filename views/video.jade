@@ -17,6 +17,7 @@ script.
 
   var my_video_state = {};
   var current_search_results = [];
+  var current_query = '';
   var MAX_RESULTS = 7;
   var MAX_PRETTY_LEN = 60;
 
@@ -42,11 +43,18 @@ script.
   }
 
   // As the user types in a video, send video search requests to the server
-  // TODO do this from the client
+  // TODO do this from the client - this async way is hairy and smelly.
   $('#video_id').on('input', function(e) {
     var query = $(e.target).context.value;
-    console.log('sending video search to server:', query);
-    socket.emit('video search', query);
+
+    // This event is triggered manually when results come back so that
+    // autocomplete will update the suggestion list. Without this check
+    // we would loop forever
+    if (query !== current_query) {
+      current_query = query;
+      current_search_results = [];
+      socket.emit('video search', query);
+    }
     return false;
   });
 
@@ -55,8 +63,6 @@ script.
       response(current_search_results);
     },
     focus: function(event, ui) {
-      console.log('focus', ui);
-      console.log(event);
       $('#video_id').val(ui.item.label);
       return false;
     },
@@ -65,13 +71,18 @@ script.
       event.video_id = ui.item.value;
       $('#play_video').trigger(event);
       return false;
-    }
+    },
+    minLength: 7
   });
 
-  // When the server sends us search results, update our local map and show
-  // them to the user
+  // When the server sends us search results, update our local collection,
+  // then trigger an update in the UI
   socket.on('video search', function(results) {
     current_search_results = transform_search_results(results);
+
+    // Manually trigger a fake input event on the text box so that autocomplete
+    // will update with the latest results
+    $('#video_id').trigger(jQuery.Event('input'));
   });
 
   // Client text box for submitting a video
@@ -81,14 +92,12 @@ script.
     // a pretty label, and the video id was passed in with the event.
     var video_id = event.video_id;
 
-    console.log('passed-in video_id from event:', video_id);
     if (video_id == undefined) {
       video_id = $('#video_id').val();
     }
 
     // Accept URLs
     if (video_id.starts_with('https:\/\/www.youtube.com')) {
-      console.log('url entered');
       video_id = video_id.split('watch?v=').slice(-1);
     }
 
