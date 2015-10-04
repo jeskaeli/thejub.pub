@@ -15,7 +15,7 @@ script.
       alert('You must be logged in to chat.')
     } else {
       socket.emit('chat message', {
-        username: username,
+        user: username,
         text: msg
       });
     }

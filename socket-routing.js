@@ -1,47 +1,31 @@
-var util = require('util');
+require('./util').monkey_patch();
 
-// patch String with #startsWith
-if ( typeof String.prototype.startsWith != 'function' ) {
-  String.prototype.startsWith = function( str ) {
-    return this.substring( 0, str.length ) === str;
-  }
-};
-
-function emit_users(io, users) {
-  io.emit('current users', users.toArray());
+function emit_users(io, user_list) {
+  io.emit('current users', user_list);
 }
 
 function emit_chat(io, msg) {
   io.emit('chat message', msg);
 }
 
+// Pass in `io` for broadcast; `socket` for direct message
+function emit_video_state(sockets, jub) {
+  sockets.emit('video state', jub.emittable_state());
+}
+
+// Clears the server's list of current users and initiates a roll call
 function refresh_users(io, jub) {
   console.log('refresh users');
   jub.clear_users();
   io.emit('ping users', 0); // Tell the users to report their presence
 }
 
-// Take in a chat obj sent from the client and turn into something we can
-// emit to display in the chat history
-function transform_chat(msg_obj) {
-  var formatted = msg_obj['text'];
-  var emph = false;
-  if (msg_obj['username']) {
-    if (formatted.startsWith('/me ')) {
-      formatted = msg_obj['username'] + ' ' +
-                  formatted.substring(3, formatted.length);
-      emph = true;
-    } else {
-      formatted = msg_obj['username'] + ": " + formatted;
-    }
-  }
-  return {
-    text: formatted,
-    emph: emph
-  };
-}
-
 function Socketeer(jub, config, io) {
+
+  // Give server a way to initiate a message
+  jub.set_broadcast_callback(function(channel, message) {
+    io.emit(channel, message);
+  });
 
   io.on('connection', function(socket) {
 
@@ -64,40 +48,40 @@ function Socketeer(jub, config, io) {
     socket.on('user present', function(user) {
       console.log('user present:', user);
       jub.add_user(user, function(user_list) {
-        io.emit('current users', user_list);
+        emit_users(io, user_list);
       });
     });
 
-    // Chat message received
+    // Chat message received from a client
     socket.on('chat message', function(client_msg_obj) {
-      // Echo message back to clients
-      if (client_msg_obj['text']) {
-        emit_chat(io, transform_chat(client_msg_obj));
-      }
+      jub.new_chat_message(client_msg_obj, function(response) {
+        emit_chat(io, response);
+      });
     });
 
     // New video
-    socket.on('video submit', function(video_id) {
+    socket.on('video submit', function(new_video_state) {
       jub.update_video_state({
-        id: video_id,
+        user: new_video_state['user'],
+        id: new_video_state['video_id'],
         start_time: Date.now()
       });
       // Send new state to all clients
-      io.emit('video state', jub.emittable_state());
+      emit_video_state(io, jub);
     });
 
-    // Request video state
-    socket.on('request video state', function(video_id) {
+    // Client requested video state
+    socket.on('video state', function(video_id) {
       console.log('client requested video state', socket.conn.remoteAddress);
       // Send new state to that client
-      socket.emit('video state', jub.emittable_state());
+      emit_video_state(socket, jub);
     });
 
-    // Video search
+    // Client requested youtube search results
     socket.on('video search', function(query) {
       console.log('searching for', query);
       jub.video_search(query, function(results) {
-        socket.emit('video search results', results);
+        socket.emit('video search', results);
       });
     });
   });

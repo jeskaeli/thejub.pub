@@ -9,3 +9,7 @@ Authentication for the websockets
 
 Using google's Youtube APIs from the client
   https://developers.google.com/youtube/v3/guides/auth/client-side-web-apps?hl=en
+
+Architecture
+  Stop using JubDJ as the conduit for inter-module communication; instead just
+  inject dependencies among modules as needed

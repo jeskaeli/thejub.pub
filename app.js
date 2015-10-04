@@ -61,31 +61,22 @@ app.use(function(err, req, res, next) {
 app.auth = require('./auth')(config);
 app.models = require('./models')(config, app.auth);
 app.db = require('./db')(config, app.models);
-app.youtube = require('./youtube')(config);
-app.jub = require('./jub_dj')(config, app.youtube);
+app.youtube = require('./youtube')(config); // doesn't need to be an app member
+app.bot = require('./bot')(config, app.youtube);
+app.chat = require('./chat')(config, app.bot);
+app.jub = require('./jub_dj')(config, app.youtube, app.chat);
 app.config = config;
 
-/* TODO scratch */
-function xinspect(o,i){
-  if(typeof i=='undefined')i='';
-  if(i.length>50)return '[MAX ITERATIONS]';
-  var r=[];
-  for(var p in o){
-    var t=typeof o[p];
-    r.push(i+p+' ('+t+'): '+(t=='object' ? 'object:'+xinspect(o[p],i+'  ') : o[p]+''));
-  }
-  return r.join(i+'\n');
-}
+// Note: in ./bin/www -> socket-routing.js, the jub receives a callback
+// that allows it to *initiate* messages over the sockets
 
+
+/* scratch */
 var token = app.auth.gen_token(function(token) {
   console.log("generated token:", token);
   console.log("encoded token:", app.auth.encode_token(token));
   app.db.store_auth('123456abcdef', token, 1);
 });
-
-//app.youtube.video_search("Marc papeghin epic ff8 medley", function(results) {
-//  console.log("Result:", xinspect(results[0]));
-//});
 /* scratch over */
 
 

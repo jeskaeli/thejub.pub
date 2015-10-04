@@ -22,6 +22,25 @@ function Youtube(config) {
       callback(resp['items']);
     });
   };
+
+  // Pass in a video ID, get back the title or null
+  this.video_title = function(id, callback) {
+    var params = {
+      part: 'snippet',
+      id: [id],
+      auth: this.api_key
+    };
+
+    // Returns an array of result items with this structure:
+    //   https://developers.google.com/youtube/v3/docs/search/list#response
+    this.youtube.videos.list(params, function(err, resp) {
+      var title = null;
+      if (resp && resp['items'].length > 0) {
+        title = resp['items'][0]['snippet']['title'];
+      }
+      callback(title);
+    });
+  }
 }
 
 module.exports = function(config) {
