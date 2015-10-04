@@ -1,0 +1,4 @@
+#!/bin/bash -e
+
+if pidof node; then kill `pidof node`; fi;
+nohup env PORT=9292 npm start > log 2>&1 &
