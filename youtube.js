@@ -20,7 +20,7 @@ function Youtube(config) {
     //   https://developers.google.com/youtube/v3/docs/search/list#response
     this.youtube.search.list(params, function(err, resp) {
       if (err) {
-        console.log('error', err);
+        console.log('youtube search error', err);
       }
       if (resp && resp['items']) {
         console.log('returning results');

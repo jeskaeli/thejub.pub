@@ -18,8 +18,27 @@ script.
   var my_video_state = {};
   var current_search_results = [];
   var current_query = '';
+  var search_queued = false;
   var MAX_RESULTS = 7;
+  var SEARCH_DELAY = 1200;
   var MAX_PRETTY_LEN = 60;
+  var MIN_QUERY_LEN = 7;
+
+  // After a short delay, initiate a video search. The idea is to give the
+  // user time to finish typing, and not flood the server with search
+  // requests
+  function initiate_video_search() {
+    if (! search_queued) {
+      search_queued = true;
+      setTimeout(
+        function() {
+          socket.emit('video search', current_query);
+          search_queued = false;
+        },
+        SEARCH_DELAY
+      );
+    }
+  }
 
   // e.g. "michelleheafy: Some cool video about someth..."
   function prettify_result(result) {
@@ -46,14 +65,17 @@ script.
   // TODO do this from the client - this async way is hairy and smelly.
   $('#video_id').on('input', function(e) {
     var query = $(e.target).context.value;
-
-    // This event is triggered manually when results come back so that
-    // autocomplete will update the suggestion list. Without this check
-    // we would loop forever
-    if (query !== current_query) {
-      current_query = query;
-      current_search_results = [];
-      socket.emit('video search', query);
+    console.log(query.length);
+    if (query.length > MIN_QUERY_LEN) {
+      // This event is triggered manually when results come back so that
+      // autocomplete will update the suggestion list. Without this check
+      // we would loop forever
+      if (query !== current_query) {
+        current_query = query;
+        current_search_results = [];
+        console.log("sending search request");
+        initiate_video_search();
+      }
     }
     return false;
   });
