@@ -1,0 +1,5 @@
+#!/bin/bash -e
+
+if ! pidof node; then
+  nohup env PORT=9292 npm start > /var/log/jub/jub.log 2>&1 &
+fi;

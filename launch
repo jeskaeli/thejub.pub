@@ -2,4 +2,4 @@
 
 npm install --loglevel verbose
 if pidof node; then kill `pidof node`; fi;
-nohup env PORT=9292 npm start > log 2>&1 &
+nohup env PORT=9292 npm start > /var/log/jub/jub.log 2>&1 &
