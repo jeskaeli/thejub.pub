@@ -8,11 +8,18 @@ function Bot(config, youtube) {
 
   // Provide a callback that accepts a response as a message object
   this.new_chat_message = function(msg_obj, callback) {
-    msg = msg_obj['text'];
+    var msg = msg_obj['text'];
     if (msg.starts_with(this.name + ':')) {
-      console.log('bot received new message:', msg_obj['text']);
+      msg = msg.substring(0, this.name.length + 2);
+      console.log('bot received new message:', msg);
+      var response = '';
+      if (msg == 'penis') {
+        response = "Dude I don't like dick. I'm not Whit.";
+      } else {
+        response = "I dunno.";
+      }
       callback({
-        text: "I dunno.",
+        text: response,
         user: this.name
       });
     }
