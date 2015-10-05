@@ -10,7 +10,7 @@ function Bot(config, youtube) {
   this.new_chat_message = function(msg_obj, callback) {
     var msg = msg_obj['text'];
     if (msg.starts_with(this.name + ':')) {
-      msg = msg.substring(0, this.name.length + 2);
+      msg = msg.substring(this.name.length + 2, msg.length);
       console.log('bot received new message:', msg);
       var response = '';
       if (msg == 'penis') {
