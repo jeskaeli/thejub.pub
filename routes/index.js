@@ -1,16 +1,16 @@
 var express = require('express');
 var router = express.Router();
+var util = require('../util');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', {
-    title: 'jub.dj'
-  });
-});
-
-// TODO not really using this
-router.post('/username', function(req, res, next) {
-  res.send('username post received');
+  console.log('route', req.route);
+  console.log('path', req.path);
+  if (req.path == '/') {
+    res.render('index', {
+      title: 'jub.dj'
+    });
+  }
 });
 
 module.exports = router;
