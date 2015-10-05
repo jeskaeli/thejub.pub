@@ -93,20 +93,35 @@ body {
   margin: -1px;
 }
 
+/* jub-style lists */
+.jub-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+.jub-list li {
+  padding: 5px 10px;
+  background: #111;
+  font-size: 14px;
+}
+.jub-list li:nth-child(odd) { background: #222; }
+
 /* chat input and history */
 #chat {
   border: 1;
   position: fixed;
   bottom: 50px;
 }
-#messages { list-style-type: none; margin: 0; padding: 0; }
-#messages { max-height: 500px; overflow-y:auto; }
-#messages li {
-  padding: 5px 10px;
-  background: #111;
-  font-size: 14px;
+
+#messages {
+  max-height: 500px;
+  overflow-y:auto;
 }
-#messages li:nth-child(odd) { background: #222; }
+
+#video-queue {
+  max-height: 300px;
+  overflow-y:auto;
+}
 
 /* current users */
 #current-users { list-style-type: none; margin: 0; padding: 0; }

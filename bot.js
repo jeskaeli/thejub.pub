@@ -18,7 +18,7 @@ function Bot(config, youtube) {
     }
   }
 
-  this.new_video_state = function(state, callback) {
+  this.new_video_start = function(state, callback) {
     var bot = this;
     this.youtube.video_title(state['id'], function(title) {
       if (title) {

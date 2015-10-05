@@ -10,7 +10,12 @@ function emit_chat(io, msg) {
 
 // Pass in `io` for broadcast; `socket` for direct message
 function emit_video_state(sockets, jub) {
-  sockets.emit('video state', jub.emittable_state());
+  sockets.emit('video state', jub.emittable_video_state());
+}
+
+// Pass in `io` for broadcast; `socket` for direct message
+function emit_queue_state(sockets, jub) {
+  sockets.emit('video queue', jub.emittable_queue_state());
 }
 
 // Clears the server's list of current users and initiates a roll call
@@ -55,26 +60,41 @@ function Socketeer(jub, config, io) {
     // Chat message received from a client
     socket.on('chat message', function(client_msg_obj) {
       jub.new_chat_message(client_msg_obj, function(response) {
-        emit_chat(io, response);
+        if (response) {
+          emit_chat(io, response);
+        }
       });
     });
 
-    // New video
-    socket.on('video submit', function(new_video_state) {
-      jub.update_video_state({
-        user: new_video_state['user'],
-        id: new_video_state['video_id'],
-        start_time: Date.now()
-      });
-      // Send new state to all clients
-      emit_video_state(io, jub);
+    // Enqueue new video.
+    socket.on('video submit', function(new_video) {
+      jub.enqueue_video(new_video);
     });
+
+    // Dequeue video for user
+    socket.on('video dequeue', function(user) {
+      jub.dequeue_video(user);
+    });
+
+    // Enqueue new playlist. obj should include playlist_id and user
+    socket.on('playlist submit', function(playlist_obj) {
+      console.log('enqueuing playlist:', playlist_obj['playlist_id'], playlist_obj['user']);
+      jub.enqueue_playlist(playlist_obj);
+    });
+
 
     // Client requested video state
     socket.on('video state', function(video_id) {
       console.log('client requested video state', socket.conn.remoteAddress);
-      // Send new state to that client
+      // Send current state to that client
       emit_video_state(socket, jub);
+    });
+
+    // Client requested queue state
+    socket.on('video state', function(video_id) {
+      console.log('client requested queue state', socket.conn.remoteAddress);
+      // Send current state to that client
+      emit_queue_state(socket, jub);
     });
 
     // Client requested youtube search results -- perform the video search

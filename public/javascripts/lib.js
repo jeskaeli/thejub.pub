@@ -1,6 +1,6 @@
 /* Utility functions for the client */
 
-function xinspect(o, i) {
+function inspect(o, i) {
   if (typeof i=='undefined')i='';
   if (i.length>50) return '[MAX ITERATIONS]';
   var r = [];

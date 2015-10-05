@@ -1,18 +1,37 @@
 div(id='player', class='flex-centered')
 div(class='not-flex-centered')
+
+  // row for "load video"
   div(class='row')
-    div(class='col-md-2')
-    form(class='form-group', id='play_video', action='')
+    div(class='col-md-1')
+    form(class='form-group', id='load_video', action='')
       div(class='col-md-5')
         input(class='form-control', id='video_id',
-          style='margin:0 0 10px 0;',
-          placeholder='Search for a video or enter an ID or URL')
+              style='margin:0 0 10px 0;',
+              placeholder='Search / video ID / URL')
       div(class='col-md-2')
-        button(class='btn btn-default') Submit
+        button(class='btn btn-default') Enqueue
+      div(class='col-md-2')
+        button(class='btn btn-default', id='dequeue') Dequeue
       div(class='col-md-2')
         button(class='btn btn-default', id='mute')
           span(id='mute-icon', class='glyphicon glyphicon-volume-up',
                aria-hidden='true')
+
+  // row for "load playlist"
+  //div(class='row')
+    div(class='col-md-2')
+    form(class='form-group', id='load_playlist', action='')
+      div(class='col-md-5')
+        input(class='form-control', id='playlist_id',
+              style='margin:0 0 10px 0;',
+              placeholder='Load playlist by ID')
+      div(class='col-md-2')
+        button(class='btn btn-default') Load
+
+  // Devote the rest to the queue
+  ul(id="video-queue", class="jub-list")
+
 script.
 
   var my_video_state = {};
@@ -58,14 +77,14 @@ script.
     select: function(event, ui) {
       var event = jQuery.Event("submit");
       event.video_id = ui.item.value;
-      $('#play_video').trigger(event);
+      $('#load_video').trigger(event);
       return false;
     },
     minLength: 5
   });
 
   // Client text box for submitting a video
-  $('#play_video').submit(function(event) {
+  $('#load_video').submit(function(event) {
     // We might have been invoked straight from an autocomplete callback,
     // in which case the value of the search box is not the video id; it's
     // a pretty label, and the video id was passed in with the event.
@@ -84,12 +103,23 @@ script.
     // TODO verify that it's a valid ID before submitting
 
     // send the new video state out and clear the video search box
-    var new_video_state = {
+    var new_video = {
       user: get_cookie('username'),
-      video_id: video_id
+      id: video_id
     }
-    socket.emit('video submit', new_video_state);
+    socket.emit('video submit', new_video); // TODO call it enqueue
     $('#video_id').val('');
+    return false;
+  });
+
+  $('#load_playlist').submit(function(event) {
+    var playlist_id = $('#playlist_id').val();
+    console.log('playlist submission:', playlist_id);
+    var playlist_obj = {
+      user: get_cookie('username'),
+      playlist_id: playlist_id
+    }
+    socket.emit('playlist submit', playlist_obj);
     return false;
   });
 
@@ -120,6 +150,24 @@ script.
     apply_video_state(video_state);
   });
 
+  // Server tells us about video state changes
+  socket.on('video queue', function(queue) {
+    console.log('video queue', queue);
+    $('#video-queue').empty();
+    for (video of queue) {
+      var item = $('<li>').text(video['user'] + ': ' + video['title']);
+      $('#video-queue').prepend(item);
+    }
+  });
+
+  // Dequeue
+  $('#dequeue').on('click', function(e) {
+    var user = get_cookie('username');
+    console.log('sending dequeue for:', user);
+    socket.emit('video dequeue', user);
+    return false;
+  });
+
   // Mute button
   $('#mute').on('click', function(e) {
     e.preventDefault();
@@ -146,8 +194,8 @@ script.
   var player;
   function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
-      height: '390',
-      width: '640',
+      height: '320',
+      width: '525',
       playerVars: {
         'autoplay': 0,
         'autohide': 1,
