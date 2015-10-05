@@ -12,7 +12,7 @@ function Bot(config, youtube) {
     if (msg.starts_with(this.name + ':')) {
       console.log('bot received new message:', msg_obj['text']);
       callback({
-        text: "Hey! I don't do a whole lot.",
+        text: "I dunno.",
         user: this.name
       });
     }
