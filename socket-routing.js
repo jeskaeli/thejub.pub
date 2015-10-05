@@ -77,11 +77,12 @@ function Socketeer(jub, config, io) {
       emit_video_state(socket, jub);
     });
 
-    // Client requested youtube search results
-    socket.on('video search', function(query) {
+    // Client requested youtube search results -- perform the video search
+    // and call the client's provided callback
+    socket.on('video search', function(query, callback) {
       console.log('searching for', query);
       jub.video_search(query, function(results) {
-        socket.emit('video search', results);
+        callback(results);
       });
     });
   });
