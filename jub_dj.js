@@ -35,18 +35,25 @@ function JubDJ(config, youtube, chat) {
   // a duration or a title -- we'll fetch those when we pop the video off
   this.enqueue_video = function(video_obj, callback) {
     // These should really be one call/request
-    youtube.video_title(video_obj['id'], function(title) {
-      youtube.video_duration(video_obj['id'], function(duration) {
-        if (title && duration) {
-          video_obj['title'] = title;
-          video_obj['duration'] = duration;
-          video_queue.unshift(video_obj);
-          console.log('enqueued video:', util.inspect(video_obj));
-          broadcast('video queue', jub.emittable_queue_state());
-        } else {
-          console.log('failed to find info for video', video_obj['id']);
-        }
-      });
+    youtube.video_specs(video_obj, function(obj) {
+      if (obj.title && obj.duration) {
+        video_queue.unshift(video_obj);
+        console.log('enqueued video:', util.inspect(video_obj));
+        broadcast('video queue', jub.emittable_queue_state());
+      } else {
+        console.log('failed to find info for video', video_obj.id);
+      }
+    });
+  }
+
+  // Add an entire playlist to the queue
+  this.enqueue_playlist = function(playlist_obj) {
+    console.log('enqueued playlist:', util.inspect(playlist_obj));
+    youtube.playlist(playlist_obj.id, function(video_list) {
+      for (video_obj of video_list) {
+        video_obj.user = playlist_obj.user;
+        jub.enqueue_video(video_obj);
+      }
     });
   }
 
@@ -56,7 +63,7 @@ function JubDJ(config, youtube, chat) {
     var queue_copy = video_queue.toArray();
     var found = false;
     while (queue_copy.length > 0) {
-      var temp_item = queue_copy.shift(); //
+      var temp_item = queue_copy.shift();
       if (temp_item.user == user && !found) {
         console.log('dequeued:', temp_item);
         found = true;
@@ -70,14 +77,8 @@ function JubDJ(config, youtube, chat) {
   }
 
   this.video_skipped = function(user) {
-    video_state['duration'] = 0;
+    video_state.duration = 0;
     chat.video_skipped(user);
-  }
-
-  // Add an entire playlist to the queue
-  this.enqueue_playlist = function(playlist_obj) {
-    youtube.get_playlist_videos(playlist_obj['playlist_id']);
-    // Iterate over videos, adding video objects to the queue.
   }
 
   // TODO maybe this function should also broadcast

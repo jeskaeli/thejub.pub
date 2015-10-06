@@ -1,6 +1,6 @@
 // Good docs here:
 //   https://developers.google.com/youtube/v3/docs/#resource-types
-
+var util = require('./util');
 
 function Youtube(config) {
   var api_key = config.google_api_key;
@@ -24,53 +24,61 @@ function Youtube(config) {
       if (err) {
         console.log('youtube search error', err);
       }
-      if (resp && resp['items']) {
+      if (resp && resp.items) {
         console.log('returning results');
-        callback(resp['items']);
+        callback(resp.items);
       }
     });
   };
 
-  // Pass in a video ID, get back the title or null
-  this.video_title = function(id, callback) {
+  // Adds title and duration to video object, and calls callback with it
+  this.video_specs = function(obj, callback) {
+    if (obj.duration && obj.title) {
+      callback(obj)
+    } else {
+       var params = {
+        part: 'snippet,contentDetails',
+        id: [obj.id],
+        auth: api_key
+      };
+
+      // Returns an array of result items with this structure:
+      //   https://developers.google.com/youtube/v3/docs/search/list#response
+      youtube.videos.list(params, function(err, resp) {
+        if (resp && resp['items'].length > 0) {
+          var duration = resp.items[0].contentDetails.duration;
+          obj.duration = moment.duration(duration).asMilliseconds();
+          obj.title = resp.items[0].snippet.title;
+        }
+        callback(obj);
+      });
+    }
+  }
+
+  // Pass in a playlist ID, get back a list of video objects
+  this.playlist = function(id, callback) {
+    console.log('youtube playlist');
     var params = {
-      part: 'snippet',
-      id: [id],
+      part: 'id,snippet',
+      playlistId: id,
       auth: api_key
     };
 
     // Returns an array of result items with this structure:
     //   https://developers.google.com/youtube/v3/docs/search/list#response
-    youtube.videos.list(params, function(err, resp) {
-      var title = null;
-      if (resp && resp['items'].length > 0) {
-        title = resp['items'][0]['snippet']['title'];
+    youtube.playlistItems.list(params, function(err, resp) {
+      if (err) { console.log(err) };
+      if (resp && resp.items && resp.items.length > 0) {
+        var video_list = resp.items.map(function(item) {
+          return {
+            title: item.snippet.title,
+            id: item.snippet.resourceId.videoId
+          }
+        });
+        callback(video_list);
       }
-      callback(title);
     });
   }
-
-  // Pass in a video ID, get back the length in seconds or null
-  // TODO could save time by getting both title and duration in one request
-  this.video_duration = function(id, callback) {
-    var params = {
-      part: 'contentDetails',
-      id: [id],
-      auth: api_key
-    };
-
-    // Returns an array of result items with this structure:
-    //   https://developers.google.com/youtube/v3/docs/search/list#response
-    youtube.videos.list(params, function(err, resp) {
-      var duration = null;
-      if (resp && resp['items'].length > 0) {
-        duration = resp['items'][0]['contentDetails']['duration'];
-        duration = moment.duration(duration).asMilliseconds();
-      }
-      callback(duration);
-    });
-  }
-
 }
 
 module.exports = function(config) {

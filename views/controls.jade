@@ -1,0 +1,147 @@
+div
+  // row of controls http://jsfiddle.net/Supergibbs/282ze/
+  div(id='controls')
+    form(class='form-group form-inline', id='load_video', action='')
+      div(class='input-group input-group-md')
+        input(class='form-control', id='omnibox',
+              style='width:300px; margin-right:10px',
+              placeholder='Search / video or playlist ID / URL')
+        span(class='input-group-btn')
+          button(class='btn btn-default', type='button',
+                 id='enqueue', data-toggle="tooltip",
+                 data-placement="bottom", title="Add to queue")
+            span(id='enqueue-icon', class='glyphicon glyphicon-import')
+          button(class='btn btn-default', type='button', id='dequeue',
+                 data-toggle='tooltip',
+                 data-placement='bottom', title='Remove last video')
+            span(id='dequeue-icon', class='glyphicon glyphicon-export')
+          button(class='btn btn-default',type='button',
+                 id='skip', data-toggle='tooltip',
+                 data-placement='bottom', title='Skip')
+            span(id='skip-icon', class='glyphicon glyphicon-fast-forward')
+          button(class='btn btn-default', type='button',
+                 id='mute', data-toggle='mute',
+                 data-placement='bottom', title='Mute')
+            span(id='mute-icon', class='glyphicon glyphicon-volume-up')
+
+script.
+
+  var MAX_RESULTS = 7;
+  var MAX_PRETTY_LEN = 60;
+
+  // e.g. "michelleheafy: Some cool video about someth..."
+  function prettify_result(result) {
+    var artist = result.snippet.channelTitle
+    var pretty = artist + ": " + result.snippet.title;
+    if (pretty.length > MAX_PRETTY_LEN) {
+      pretty = pretty.slice(0, MAX_PRETTY_LEN - 3) + "...";
+    }
+    return pretty
+  }
+
+  // Take in youtube search result items and turn them into an array of objects
+  // that autocomplete can handle, truncating the list in the process
+  function transform_search_results(results) {
+    return results.slice(0, MAX_RESULTS).map(function(result) {
+      return {
+        label: prettify_result(result),
+        value: result.id.videoId
+      }
+    });
+  }
+
+  $('#omnibox').autocomplete({
+    // Request a video search; once the results come back, update the UI
+    source: function(request, response) {
+      socket.emit('video search', request['term'], function(results) {
+        response(transform_search_results(results));
+      })
+    },
+
+    // Populate the search box with the video's title, not ID
+    focus: function(event, ui) {
+      $('#omnibox').val(ui.item.label);
+      return false;
+    },
+
+    // When a user chooses a suggestion (hits enter) start the video
+    select: function(event, ui) {
+      var event = jQuery.Event("submit");
+      event.video_id = ui.item.value;
+      $('#load_video').trigger(event);
+      return false;
+    },
+    minLength: 5
+  });
+
+  // Client text box for submitting a video
+  $('#load_video').submit(function(event) {
+    // We might have been invoked straight from an autocomplete callback,
+    // in which case the value of the search box is not the video id; it's
+    // a pretty label, and the video id was passed in with the event.
+    var id = event.video_id;
+    var channel = 'video submit';
+
+    // We were invoked via a normal form submit
+    if (id == undefined) {
+      id = $('#omnibox').val();
+    }
+
+    // Accept video URLs
+    if (id.starts_with('https:\/\/www.youtube.com')) {
+      console.log('url');
+      if (id.indexOf('youtube.com\/watch') > 0) { // TODO do we have regex?
+        console.log('video');
+        id = id.split('watch?v=')[1];
+      } else if (id.indexOf('youtube.com\/playlist') > 0) {
+        console.log('playlist');
+        id = id.split('playlist?list=')[1];
+      }
+    }
+
+    // Now it's an id (either a playlist or video)
+    if (id.length > 11) { // TODO not sure it this will always be true
+      channel = 'playlist submit';
+    }
+
+    // send the new video state out and clear the video search box
+    var submission = {
+      user: get_cookie('username'),
+      id: id
+    }
+    console.log('submitting', submission);
+    socket.emit(channel, submission);
+    $('#omnibox').val('');
+    return false;
+  });
+
+  // Dequeue
+  $('#dequeue').on('click', function(e) {
+    var user = get_cookie('username');
+    console.log('sending dequeue for:', user);
+    socket.emit('video dequeue', user);
+    return false;
+  });
+
+  // Skip
+  $('#skip').on('click', function(e) {
+    var user = get_cookie('username');
+    socket.emit('video skip', user);
+    return false;
+  });
+
+  // Mute button
+  $('#mute').on('click', function(e) {
+    e.preventDefault();
+    if (player.isMuted()) {
+      player.unMute();
+      $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-up');
+      $('#mute').attr('title', 'Mute');
+    }
+    else {
+      player.mute();
+      $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-off');
+      $('#mute').attr('title', 'Unmute');
+    }
+    return false;
+  });

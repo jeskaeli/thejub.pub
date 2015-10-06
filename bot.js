@@ -1,9 +1,7 @@
 require('./util').monkey_patch();
 
 function Bot(config, youtube) {
-  this.config = config;
   this.name = "jubbot";
-  this.youtube = youtube;
   console.log('bot initialized with name', this.name);
   var bot = this;
 
@@ -26,11 +24,11 @@ function Bot(config, youtube) {
     }
   }
 
-  this.video_started = function(state, callback) {
-    this.youtube.video_title(state['id'], function(title) {
-      if (title) {
+  this.video_started = function(video_obj, callback) {
+    youtube.video_specs(video_obj, function(obj) {
+      if (obj.title) {
         callback({
-          text: state['user'] + ' started "' + title + '"',
+          text: obj.user + ' started "' + obj.title + '"',
           user: bot.name
         });
       }

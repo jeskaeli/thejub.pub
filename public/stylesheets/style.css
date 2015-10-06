@@ -1,4 +1,7 @@
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+  border-radius: 0 !important; /* square corners */
+}
 
 a {
   color: #0097AA;
@@ -12,36 +15,84 @@ html {
 }
 
 body {
-  font-size: 14px;
+  font-size: 13px;
   background-color: #181818;
   color: #DDDDEE;
   height: 100%;
 }
 
 .form-control {
+  border: 0px;
   background-color: #222222;
   color: #BBBBBB;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .btn {
   background-color: #3F2C52;
-  color: #fff;
   border-color: #3F2C52;
-  font-size: 14px;
+  color: #fff;
+  font-size: 13px;
+
 }
 
 .flex-centered {
   float: none;
-  margin: 25px auto;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display:         flex;
 }
 
-/* Autocomplete
-----------------------------------*/
+/* jub-style lists */
+.jub-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+.jub-list li {
+  padding: 5px 10px;
+  background: #111;
+  font-size: 13px;
+}
+.jub-list li:nth-child(odd) { background: #222; }
+
+/* video player */
+#player {
+  margin: 25px auto;
+}
+
+/* title */
+#title {
+  border: 1;
+  position: fixed;
+  right: 50px;
+}
+/* chat input and history */
+#chat {
+  border: 1;
+  position: fixed;
+  bottom: 50px;
+}
+
+#messages {
+  max-height: 500px;
+  overflow-y:auto;
+}
+
+#video-queue {
+  max-height: 300px;
+  overflow-y:auto;
+}
+
+/* current users */
+#current-users { list-style-type: none; margin: 0; padding: 0; }
+#current-users { max-height: 200px; overflow-y:auto; }
+
+/*
+ * Autocomplete
+ */
+
 /* Hide weird accessibility thing from jquery-ui's autocomplete */
 .ui-helper-hidden-accessible { position: absolute; left: -9999px; }
 .ui-autocomplete { position: absolute; cursor: default; }
@@ -93,37 +144,8 @@ body {
   margin: -1px;
 }
 
-/* jub-style lists */
-.jub-list {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-.jub-list li {
-  padding: 5px 10px;
-  background: #111;
-  font-size: 14px;
-}
-.jub-list li:nth-child(odd) { background: #222; }
-
-/* chat input and history */
-#chat {
-  border: 1;
-  position: fixed;
-  bottom: 50px;
+.form-control {
+  font-size: 13px;
 }
 
-#messages {
-  max-height: 500px;
-  overflow-y:auto;
-}
-
-#video-queue {
-  max-height: 300px;
-  overflow-y:auto;
-}
-
-/* current users */
-#current-users { list-style-type: none; margin: 0; padding: 0; }
-#current-users { max-height: 200px; overflow-y:auto; }
 

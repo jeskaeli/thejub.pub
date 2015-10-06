@@ -1,0 +1,11 @@
+ul(id="video-queue", class="jub-list")
+script.
+  // Server tells us about video state changes
+  socket.on('video queue', function(queue) {
+    console.log('video queue', queue);
+    $('#video-queue').empty();
+    for (video of queue) {
+      var item = $('<li>').text(video['user'] + ': ' + video['title']);
+      $('#video-queue').prepend(item);
+    }
+  });

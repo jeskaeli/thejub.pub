@@ -7,13 +7,18 @@ html(lang="en")
   body
     div(class='container-fluid')
       div(class='page-header')
-        h1= title
+        div(class='row')
+          div(class='col-md-6')
+            include ./controls.jade
+          span(id='title', style='font-size:36px;') jub.dj
+        //h1= title
       div(class='row')
         div(class='col-md-2')
           include ./menu.jade
 
         div(class='col-md-6')
-          include ./video.jade
+          include ./player.jade
+          include ./queue.jade
 
         div(class='col-md-4')
           include ./chat.jade

@@ -85,7 +85,6 @@ function Socketeer(jub, config, io) {
 
     // Enqueue new playlist. obj should include playlist_id and user
     socket.on('playlist submit', function(playlist_obj) {
-      console.log('enqueuing playlist:', playlist_obj['playlist_id'], playlist_obj['user']);
       jub.enqueue_playlist(playlist_obj);
     });
 
