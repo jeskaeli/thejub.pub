@@ -5,6 +5,7 @@ function Bot(config, youtube) {
   this.name = "jubbot";
   this.youtube = youtube;
   console.log('bot initialized with name', this.name);
+  var bot = this;
 
   // Provide a callback that accepts a response as a message object
   this.new_chat_message = function(msg_obj, callback) {
@@ -25,15 +26,25 @@ function Bot(config, youtube) {
     }
   }
 
-  this.new_video_start = function(state, callback) {
-    var bot = this;
+  this.video_started = function(state, callback) {
     this.youtube.video_title(state['id'], function(title) {
       if (title) {
-        var text = state['user'] + ' started "' + title + '"';
-        callback({ text: text, user: bot.name });
+        callback({
+          text: state['user'] + ' started "' + title + '"',
+          user: bot.name
+        });
       }
     });
   }
+
+  this.video_skipped = function(user, callback) {
+    if (!user) { user = 'Someone'; }
+    callback({
+      text: user + ' decided to skip.',
+      user: bot.name
+    });
+  }
+
 }
 
 module.exports = function(config, youtube) {

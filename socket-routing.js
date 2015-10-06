@@ -75,7 +75,7 @@ function Socketeer(jub, config, io) {
     // Skip video.
     socket.on('video skip', function(user) {
       console.log('video skip', user);
-      jub.skip_video(user);
+      jub.video_skipped(user);
     });
 
     // Dequeue video for user

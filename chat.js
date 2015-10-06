@@ -56,9 +56,15 @@ function Chat(config, bot) {
   }
 
   // When there's a new video state, tell the bot and broadcast what he says
-  this.new_video_start = function(new_state) {
-    bot.new_video_start(new_state, this.broadcast_msg_obj);
+  this.video_started = function(new_state) {
+    bot.video_started(new_state, this.broadcast_msg_obj);
   }
+
+  // When there's a new video state, tell the bot and broadcast what he says
+  this.video_skipped = function(user) {
+    bot.video_skipped(user, this.broadcast_msg_obj);
+  }
+
 }
 
 module.exports = function(config, bot) {

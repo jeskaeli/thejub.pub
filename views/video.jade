@@ -174,7 +174,6 @@ script.
   // Skip
   $('#skip').on('click', function(e) {
     var user = get_cookie('username');
-    console.log('sending skip from:', user);
     socket.emit('video skip', user);
     return false;
   });

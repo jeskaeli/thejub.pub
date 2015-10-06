@@ -69,9 +69,9 @@ function JubDJ(config, youtube, chat) {
     broadcast('video queue', jub.emittable_queue_state());
   }
 
-  // TODO !
-  this.skip_video = function(user, callback) {
+  this.video_skipped = function(user) {
     video_state['duration'] = 0;
+    chat.video_skipped(user);
   }
 
   // Add an entire playlist to the queue
@@ -83,7 +83,7 @@ function JubDJ(config, youtube, chat) {
   // TODO maybe this function should also broadcast
   this.update_video_state = function(new_state) {
     video_state = new_state;
-    chat.new_video_start(new_state);
+    chat.video_started(new_state);
     console.log("Updated video state: %s",
                 util.inspect(video_state));
   }
