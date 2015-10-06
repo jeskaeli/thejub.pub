@@ -69,6 +69,11 @@ function JubDJ(config, youtube, chat) {
     broadcast('video queue', jub.emittable_queue_state());
   }
 
+  // TODO !
+  this.skip_video = function(user, callback) {
+    video_state['duration'] = 0;
+  }
+
   // Add an entire playlist to the queue
   this.enqueue_playlist = function(playlist_obj) {
     youtube.get_playlist_videos(playlist_obj['playlist_id']);

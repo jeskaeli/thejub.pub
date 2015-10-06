@@ -13,7 +13,9 @@ div(class='not-flex-centered')
         button(class='btn btn-default') Enqueue
       div(class='col-md-2')
         button(class='btn btn-default', id='dequeue') Dequeue
-      div(class='col-md-2')
+      div(class='col-md-1')
+        button(class='btn btn-default', id='skip') Skip
+      div(class='col-md-1')
         button(class='btn btn-default', id='mute')
           span(id='mute-icon', class='glyphicon glyphicon-volume-up',
                aria-hidden='true')
@@ -107,6 +109,7 @@ script.
       user: get_cookie('username'),
       id: video_id
     }
+    console.log('submitting', new_video);
     socket.emit('video submit', new_video); // TODO call it enqueue
     $('#video_id').val('');
     return false;
@@ -165,6 +168,14 @@ script.
     var user = get_cookie('username');
     console.log('sending dequeue for:', user);
     socket.emit('video dequeue', user);
+    return false;
+  });
+
+  // Skip
+  $('#skip').on('click', function(e) {
+    var user = get_cookie('username');
+    console.log('sending skip from:', user);
+    socket.emit('video skip', user);
     return false;
   });
 

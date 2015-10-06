@@ -68,7 +68,14 @@ function Socketeer(jub, config, io) {
 
     // Enqueue new video.
     socket.on('video submit', function(new_video) {
+      console.log('video submit', new_video);
       jub.enqueue_video(new_video);
+    });
+
+    // Skip video.
+    socket.on('video skip', function(user) {
+      console.log('video skip', user);
+      jub.skip_video(user);
     });
 
     // Dequeue video for user
