@@ -10,11 +10,15 @@ function Bot(config, youtube) {
     var msg = msg_obj['text'];
     if (msg.starts_with(this.name + ':')) {
       msg = msg.substring(this.name.length + 2, msg.length);
+	  msg = msg.toLowerCase();
       console.log('bot received new message:', msg);
       var response = '';
       if (msg == 'penis') {
         response = "Dude I don't like dick. I'm not Whit.";
-      } else {
+      } else if ((msg == 'brice sux') || (msg == 'brice sucks'))
+	  {
+		response = "BRICE SUUUUUX";
+	  } else {
         response = "I dunno.";
       }
       callback({
