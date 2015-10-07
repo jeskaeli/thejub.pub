@@ -44,7 +44,15 @@ function Socketeer(jub, config, io) {
       refresh_users(io, jub);
     });
 
-    // A user changed their name
+    // A user just loaded the page; send them a welcome message
+    socket.on('user loaded', function(user) {
+      jub.new_user_connection(socket, function(msg) {
+        socket.emit('chat message', msg);
+      });
+      refresh_users(io, jub);
+    });
+
+    // A user updated its name
     socket.on('user update', function(user) {
       refresh_users(io, jub);
     });
@@ -97,7 +105,7 @@ function Socketeer(jub, config, io) {
     });
 
     // Client requested queue state
-    socket.on('video state', function(video_id) {
+    socket.on('queue', function(video_id) {
       console.log('client requested queue state', socket.conn.remoteAddress);
       // Send current state to that client
       emit_queue_state(socket, jub);

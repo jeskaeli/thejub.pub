@@ -23,7 +23,7 @@ function JubDJ(config, youtube, chat) {
         console.log('starting next video:', next_video['id']);
         jub.update_video_state(next_video);
         broadcast('video state', jub.emittable_video_state()); //TODO weird
-        broadcast('video queue', jub.emittable_queue_state());
+        broadcast('queue', jub.emittable_queue_state());
       }
     }
   }
@@ -39,7 +39,7 @@ function JubDJ(config, youtube, chat) {
       if (obj.title && obj.duration) {
         video_queue.unshift(video_obj);
         console.log('enqueued video:', util.inspect(video_obj));
-        broadcast('video queue', jub.emittable_queue_state());
+        broadcast('queue', jub.emittable_queue_state());
       } else {
         console.log('failed to find info for video', video_obj.id);
       }
@@ -57,7 +57,10 @@ function JubDJ(config, youtube, chat) {
     });
   }
 
-  // TODO not really thread safe
+  // There can be races here - if two people dequeue at the same time, one of
+  // them will 'win' the race and get back to the clients first. Then the next
+  // one, which won't include the change the first one made, will finish and
+  // *that* is the version that clients will end up with.
   this.dequeue_video = function(user, callback) {
     var new_queue = Deque();
     var queue_copy = video_queue.toArray();
@@ -73,7 +76,7 @@ function JubDJ(config, youtube, chat) {
       }
       video_queue = new_queue;
     }
-    broadcast('video queue', jub.emittable_queue_state());
+    broadcast('queue', jub.emittable_queue_state());
   }
 
   this.video_skipped = function(user) {
@@ -107,9 +110,16 @@ function JubDJ(config, youtube, chat) {
     current_users.add(chat.bot.name);
   };
 
+  // Kinda weird that this fn has some knowledge about what the caller is going
+  // to do next, but on the other hand the caller needs to pass in a callback
+  // so that it can do its next task with the up-to-date data.
   this.add_user = function(user, callback) {
     current_users.add(user);
     callback(current_users.toArray());
+  }
+
+  this.new_user_connection = function(user, callback) {
+    chat.welcome(user, callback);
   }
 
   this.video_search = function(query, callback) {

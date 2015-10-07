@@ -5,6 +5,23 @@ function Bot(config, youtube) {
   console.log('bot initialized with name', this.name);
   var bot = this;
 
+  function bot_msg_obj(text) {
+    return {
+      text: text,
+      user: bot.name
+    }
+  }
+
+  this.welcome = function(user, callback) {
+    var msg = 'Welcome'
+    if (user && user.length > 0) { msg += ', ' + user; }
+    msg += '! Latest updates:\n' +
+      config.latest_updates
+        .map(function(str) { return '* ' + str; })
+        .join('\n');
+    callback(bot_msg_obj(msg));
+  }
+
   // Provide a callback that accepts a response as a message object
   this.new_chat_message = function(msg_obj, callback) {
     var msg = msg_obj['text'];
@@ -17,32 +34,23 @@ function Bot(config, youtube) {
       } else {
         response = "I dunno.";
       }
-      callback({
-        text: response,
-        user: this.name
-      });
+      callback(bot_msg_obj(response));
     }
   }
 
   this.video_started = function(video_obj, callback) {
     youtube.video_specs(video_obj, function(obj) {
       if (obj.title) {
-        callback({
-          text: obj.user + ' started "' + obj.title + '"',
-          user: bot.name
-        });
+        var msg = obj.user + ' started "' + obj.title + '"'
+        callback(bot_msg_obj(msg));
       }
     });
   }
 
   this.video_skipped = function(user, callback) {
-    if (!user) { user = 'Someone'; }
-    callback({
-      text: user + ' decided to skip.',
-      user: bot.name
-    });
+    var msg = (user || 'Someone') + ' decided to skip.';
+    callback(bot_msg_obj(msg));
   }
-
 }
 
 module.exports = function(config, youtube) {

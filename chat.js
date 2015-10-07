@@ -1,27 +1,34 @@
 var util = require('./util')
 util.monkey_patch();
 
+
+// TODO unify this API - functions expect different kinds of callbacks
 function Chat(config, bot) {
   this.bot = bot
 
   // Take in a chat obj sent from the client and turn into something we can
   // emit to display in the chat history
   function transform_chat(msg_obj) {
-    var formatted = msg_obj['text'];
+    var formatted = msg_obj.text;
     var emph = false;
-    if (msg_obj['user']) {
+    if (msg_obj.user) {
       if (formatted.starts_with('/me ')) {
-        formatted = msg_obj['user'] + ' ' +
+        formatted = msg_obj.user + ' ' +
           formatted.substring(3, formatted.length);
           emph = true;
       } else {
-        formatted = msg_obj['user'] + ": " + formatted;
+        formatted = msg_obj.user + ": " + formatted;
       }
     }
-    return {
+    var transformed = {
+      user: msg_obj.user,
       text: formatted,
       emph: emph
     };
+    if (msg_obj.user == bot.name) {
+      transformed.bot = true;
+    }
+    return transformed;
   }
 
   // Usually we are given a callback that has access to the sockets;
@@ -51,11 +58,18 @@ function Chat(config, bot) {
     // Pass message to bot. He will return a response obj and we
     // will transform it into a string.
     bot.new_chat_message(msg_obj, function(resp_obj) {
+      console.log('resp', resp_obj);
       callback(transform_chat(resp_obj));
     });
   }
 
+  this.welcome = function(user, callback) {
+    bot.welcome(user, callback);
+  }
+
   // When there's a new video state, tell the bot and broadcast what he says
+  // TODO to unify API, chat should not have its own copy of the broadcast fn;
+  // it should be passed in from the caller like the rest of the fns
   this.video_started = function(new_state) {
     bot.video_started(new_state, this.broadcast_msg_obj);
   }

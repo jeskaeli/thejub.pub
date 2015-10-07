@@ -14,6 +14,11 @@ div(class='row', style='bottom:30px; position:fixed;')
     a(href='https://github.com/aromatt/jub.dj/issues',
       target="_blank") Report bug or request feature
 script.
+
+  var get_username = function() {
+    return get_cookie('username') || 'someone';
+  }
+
   // Username input box
   $('#auth').submit(function() {
     var username = $('#username').val();
@@ -39,11 +44,10 @@ script.
 
   // Document is loaded so cookies are probably ready
   $( document ).ready(function() {
-    socket.emit('user update', 0);
+    socket.emit('user loaded', get_username());
   });
 
   // Server is asking who is present
   socket.on('ping users', function() {
-    user = get_cookie('username') || 'someone';
-    socket.emit('user present', user);
+    socket.emit('user present', get_username());
   });
