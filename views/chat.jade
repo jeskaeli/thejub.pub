@@ -8,6 +8,31 @@ div(class='row')
       button(class='btn btn-default') Send
 
 script.
+
+  var new_chat_li = function(msg_obj) {
+    var li = $('<li>');
+    var user_b = $('<b>');
+    user_b.append(document.createTextNode(msg_obj.user));
+
+    // Start with the (bold) user name)
+    li.append(user_b);
+    li.append('<br>');
+
+    // Add each line of the message, with <br>'s in between
+    for (line of msg_obj.text.split('\n')) {
+      console.log(line);
+      li.append(document.createTextNode(line));
+      li.append('<br>');
+    }
+
+    // Italicize if needed
+    if (msg_obj['emph']) {
+      li.css('font-style', 'italic');
+    }
+    return li;
+  }
+
+  // Client chat message submission
   $('#chat').submit(function() {
     var msg = $('#chat-input').val();
     var username = get_cookie('username');
@@ -23,14 +48,18 @@ script.
     return false;
   });
 
-  // TODO client should put together "username: message", not server
+
+  // Chat message received from server
   socket.on('chat message', function(msg_obj) {
     if (msg_obj.text == undefined) {
       return;
     }
-    if (msg_obj.text.indexOf(get_username()) > 0) {
-      if (!msg_obj.bot) {
-        $.titleAlert((msg_obj.user || 'someone') + ' says...', {
+    msg_obj.user = msg_obj.user || 'someone';
+
+    // Detect mentions and notify in title bar
+    if (msg_obj.text.indexOf(get_username()) >= 0) {
+      if (!msg_obj.is_bot) {
+        $.titleAlert(msg_obj.user + ' says...', {
           requireBlur: true,
           duration: 0,
           interval: 700
@@ -40,26 +69,16 @@ script.
 
     console.log('received chat', msg_obj);
     var list = $('#messages');
-    var new_item = $('<li>');
-    var lines = msg_obj.text.split('\n');
 
     // Before appending, note the height of the history.
     var old_y = list.height();
     var max_y = parseInt(list.css('max-height'), 10);
-    var at_bottom = (list[0].scrollTop == list[0].scrollHeight - max_y);
+    var at_bottom = (Math.abs(list[0].scrollHeight - list[0].scrollTop - max_y) < 10);
+    console.log(list[0].scrollTop, list[0].scrollHeight, old_y, max_y, at_bottom);
 
-    // Insert <br>'s where \n's used to be
-    for (line of lines) {
-      new_item.append(document.createTextNode(line));
-      new_item.append('<br>');
-    }
+    var chat_li = new_chat_li(msg_obj);
 
-    // Italicize if needed
-    if (msg_obj['emph']) {
-      new_item.css('font-style', 'italic');
-    }
-
-    list.append(new_item);
+    list.append(chat_li);
     var new_y = list.height();
 
     // If the chat box is newly scrolling or we were already scrolled to the
