@@ -29,6 +29,24 @@ script.
   var MAX_RESULTS = 7;
   var MAX_PRETTY_LEN = 60;
 
+  //TODO: load the controls and player in a deliberate order so one can reflect the other's mute state
+  $( document ).ready(function() {
+    draw_mute_status(); 
+  });
+  
+  function draw_mute_status()
+  {    
+    var is_muted = get_cookie('muted');
+    if (is_muted == 1) {      
+      $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-off');
+      $('#mute').attr('title', 'Unmute');
+    }
+    else {
+      $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-up');
+      $('#mute').attr('title', 'Mute');
+    }
+  }
+  
   // e.g. "michelleheafy: Some cool video about someth..."
   function prettify_result(result) {
     var artist = result.snippet.channelTitle
@@ -142,16 +160,17 @@ script.
 
   // Mute button
   $('#mute').on('click', function(e) {
-    e.preventDefault();
+    e.preventDefault();    
+    var expiration_date = new Date();
+    expiration_date.setFullYear(expiration_date.getFullYear() + 1);
     if (player.isMuted()) {
-      player.unMute();
-      $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-up');
-      $('#mute').attr('title', 'Mute');
+      player.unMute();      
+      document.cookie = 'muted=0; ' + 'expires=' + expiration_date.toGMTString();
     }
     else {
-      player.mute();
-      $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-off');
-      $('#mute').attr('title', 'Unmute');
+      player.mute();      
+      document.cookie = 'muted=1; ' + 'expires=' + expiration_date.toGMTString();
     }
+    draw_mute_status();
     return false;
   });
