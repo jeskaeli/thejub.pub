@@ -46,7 +46,7 @@ function Socketeer(jub, config, io) {
 
     // A user just loaded the page; send them a welcome message
     socket.on('user loaded', function(user) {
-      jub.new_user_connection(socket, function(msg) {
+      jub.new_user_connection(user, function(msg) {
         socket.emit('chat message', msg);
       });
       refresh_users(io, jub);

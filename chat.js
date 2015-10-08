@@ -1,40 +1,73 @@
 var util = require('./util')
+var crypto = require('crypto');
 util.monkey_patch();
-
 
 // TODO unify this API - functions expect different kinds of callbacks
 function Chat(config, bot) {
-  this.bot = bot
+  this.bot = bot;
+  var color_map = {};
+
+  // Sets or returns an initial color for the user
+  function color_for(user, color) {
+    if (color) {
+      color_map[user] = color;
+    } else if (!color_map[user]) {
+      var hash = crypto.createHash('md5');
+      hash.update(user);
+      color_map[user] = '#' + hash.digest('hex').slice(3,9);
+    }
+    return color_map[user];
+  }
 
   // Take in a chat obj sent from the client and turn into something we can
   // emit to display in the chat history
-  function transform_chat(msg_obj) {
-    var formatted = msg_obj.text;
-    var emph = false;
-    if (msg_obj.user) {
-      if (formatted.starts_with('/me ')) {
-        formatted = msg_obj.user + ' ' +
-          formatted.substring(3, formatted.length);
-          emph = true;
-      } else {
-        formatted = msg_obj.user + ": " + formatted;
-      }
+  var transform_chat = function(msg_obj) {
+    msg_obj.is_bot = (msg_obj.user == bot.name);
+    msg_obj.color = color_for(msg_obj.user);
+    return msg_obj
+  }
+
+  var process_msg = function(msg_obj, callback) {
+    if (!msg_obj.user)
+      return;
+
+    // User is setting its color; stop after setting the color
+    if (msg_obj.text.starts_with('/color ')) {
+      color_for(msg_obj.user, msg_obj.text.substring(7, msg_obj.text.length));
+      console.log(msg_obj.user, 'set color to', color_for(msg_obj.user));
+      return;
     }
-    var transformed = {
-      user: msg_obj.user,
-      text: formatted,
-      emph: emph
-    };
+
+    // Someone is impersonating the bot; change the text
     if (msg_obj.user == bot.name) {
-      transformed.bot = true;
+      msg_obj = {
+        user: bot.name,
+        text: 'Someone just tried to impersonate me!'
+      };
     }
-    return transformed;
+
+    // User is emoting
+    if (msg_obj.text.starts_with('/me ')) {
+      msg_obj.text = msg_obj.text.substring(3, msg_obj.text.length);
+      msg_obj.emote = true;
+    }
+
+    // Echo message back to clients
+    if (msg_obj.text) {
+      callback(transform_chat(msg_obj));
+    }
+
+    // Pass message to bot. He will return a response obj and we
+    // will transform it then send it out to clients
+    bot.new_chat_message(msg_obj, function(resp_obj) {
+      callback(transform_chat(resp_obj));
+    });
   }
 
   // Usually we are given a callback that has access to the sockets;
   // this is a way for us to initiate a message without such a callback.
+  // TODO chat should also have callbacks available for whispering
   this.set_broadcast_callback = function(callback) {
-
     this.broadcast_msg_obj = function(msg_obj) {
       callback('chat message', transform_chat(msg_obj));
     }
@@ -42,39 +75,21 @@ function Chat(config, bot) {
 
   // Provide a callback that accepts a string response
   this.new_chat_message = function(msg_obj, callback) {
-    // Short circuit bot impersonators TODO remove later
-    if (msg_obj['user'] == bot.name) {
-      msg_obj = {
-        user: bot.name,
-        text: 'Someone just tried to impersonate me!'
-      };
-    }
+    process_msg(msg_obj, callback);
+  }
 
-    // Echo message back to clients
-    if (msg_obj['text']) {
-      callback(transform_chat(msg_obj));
-    }
-
-    // Pass message to bot. He will return a response obj and we
-    // will transform it into a string.
-    bot.new_chat_message(msg_obj, function(resp_obj) {
-      console.log('resp', resp_obj);
+  this.welcome = function(user, callback) {
+    bot.welcome(user, function(resp_obj) {
       callback(transform_chat(resp_obj));
     });
   }
 
-  this.welcome = function(user, callback) {
-    bot.welcome(user, callback);
-  }
-
   // When there's a new video state, tell the bot and broadcast what he says
-  // TODO to unify API, chat should not have its own copy of the broadcast fn;
-  // it should be passed in from the caller like the rest of the fns
   this.video_started = function(new_state) {
     bot.video_started(new_state, this.broadcast_msg_obj);
   }
 
-  // When there's a new video state, tell the bot and broadcast what he says
+  // When a video is skipped, tell the bot and broadcast what he says
   this.video_skipped = function(user) {
     bot.video_skipped(user, this.broadcast_msg_obj);
   }

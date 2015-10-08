@@ -13,6 +13,7 @@ script.
     var li = $('<li>');
     var user_b = $('<b>');
     user_b.append(document.createTextNode(msg_obj.user));
+    user_b.css('color', msg_obj.color);
 
     // Start with the (bold) user name)
     li.append(user_b);
