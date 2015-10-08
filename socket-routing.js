@@ -15,7 +15,7 @@ function emit_video_state(sockets, jub) {
 
 // Pass in `io` for broadcast; `socket` for direct message
 function emit_queue_state(sockets, jub) {
-  sockets.emit('video queue', jub.emittable_queue_state());
+  sockets.emit('queue', jub.emittable_queue_state());
 }
 
 // Clears the server's list of current users and initiates a roll call
