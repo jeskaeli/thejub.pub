@@ -7,8 +7,8 @@ div
               style='width:300px; margin-right:10px',
               placeholder='Search / video or playlist ID / URL')
         span(class='input-group-btn')
-          button(class='btn btn-default', type='button',
-                 id='enqueue', data-toggle="tooltip",
+          button(class='btn btn-default', type='button', id='enqueue', 
+                 data-toggle="tooltip",
                  data-placement="bottom", title="Add to queue")
             span(id='enqueue-icon', class='glyphicon glyphicon-import')
           button(class='btn btn-default', type='button', id='dequeue',
@@ -66,8 +66,8 @@ script.
 
     // When a user chooses a suggestion (hits enter) start the video
     select: function(event, ui) {
-      var event = jQuery.Event("submit");
-      event.video_id = ui.item.value;
+      var event = $.Event("submit");
+      event.video_id = ui.item.value;      
       $('#load_video').trigger(event);
       return false;
     },
@@ -80,7 +80,7 @@ script.
     // in which case the value of the search box is not the video id; it's
     // a pretty label, and the video id was passed in with the event.
     var id = event.video_id;
-    var channel = 'video submit';
+    var channel = 'video enqueue';
 
     // We were invoked via a normal form submit
     if (id == undefined) {
@@ -115,6 +115,16 @@ script.
     return false;
   });
 
+  // Enqueue
+  $('#enqueue').on('click', function(e) {
+    var user = get_cookie('username');
+    console.log('sending enqueue for:', user);    
+    var event = $.Event("submit");
+    event.video_id = $('#omnibox').val();
+    $('#load_video').trigger(event);
+    return false;   
+  });
+  
   // Dequeue
   $('#dequeue').on('click', function(e) {
     var user = get_cookie('username');

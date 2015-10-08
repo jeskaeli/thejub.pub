@@ -67,8 +67,8 @@ function Socketeer(jub, config, io) {
     });
 
     // Enqueue new video.
-    socket.on('video submit', function(new_video) {
-      console.log('video submit', new_video);
+    socket.on('video enqueue', function(new_video) {
+      console.log('video enqueue', new_video);
       jub.enqueue_video(new_video);
     });
 
