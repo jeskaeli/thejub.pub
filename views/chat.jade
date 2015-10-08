@@ -9,26 +9,38 @@ div(class='row')
 
 script.
 
+  var save_color = function(color) {
+    var expiration_date = new Date();
+    expiration_date.setFullYear(expiration_date.getFullYear() + 1);
+    document.cookie = 'username_color=' + color + '; ' +
+                      'expires=' + expiration_date.toGMTString();
+  }
+
   var new_chat_li = function(msg_obj) {
     var li = $('<li>');
-    var user_b = $('<b>');
-    user_b.append(document.createTextNode(msg_obj.user));
-    user_b.css('color', msg_obj.color);
 
-    // Start with the (bold) user name)
-    li.append(user_b);
-    li.append('<br>');
+    // Emoting?
+    if (msg_obj.emote) {
+      var full_text = msg_obj.user + ' ' + msg_obj.text;
+      li.append(li.append(document.createTextNode(full_text)));
+      li.css({
+        'font-style': 'italic',
+        'color': msg_obj.color
+      });
+    } else {
 
-    // Add each line of the message, with <br>'s in between
-    for (line of msg_obj.text.split('\n')) {
-      console.log(line);
-      li.append(document.createTextNode(line));
-      li.append('<br>');
-    }
+      // Start with the (bold) user name)
+      var user_b = $('<b>');
+      user_b.css('color', msg_obj.color);
+      user_b.append(document.createTextNode(msg_obj.user));
+      li.append(user_b);
 
-    // Italicize if needed
-    if (msg_obj['emph']) {
-      li.css('font-style', 'italic');
+      // Add each line of the message, with <br>'s in between
+      for (line of msg_obj.text.split('\n')) {
+        console.log(line);
+        li.append('<br>');
+        li.append(document.createTextNode(line));
+      }
     }
     return li;
   }
@@ -68,6 +80,14 @@ script.
       }
     }
 
+    // Though the client can request a color, the server is the authority on
+    // color; save our assigned color as a cookie so that we can remind the
+    // server of it next time.
+    // TODO this should absolutely be saved on the server
+    if (msg_obj.color && msg_obj.user == get_username()) {
+      save_color(msg_obj.color);
+    }
+
     console.log('received chat', msg_obj);
     var list = $('#messages');
 
@@ -88,3 +108,17 @@ script.
       list[0].scrollTop = list[0].scrollHeight;
     }
   });
+
+  // Load the username color cookie and send a message to the server's chat
+  // module indicating the color choice.
+  $( document ).ready(function() {
+    var color = get_cookie('username_color');
+    var username = get_cookie('username');
+    if (color && username) {
+      socket.emit('chat message', {
+        user: username,
+        text: '/color ' + color
+      })
+    }
+  });
+
