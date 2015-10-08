@@ -13,7 +13,7 @@ function Bot(config, youtube) {
   }
 
   this.welcome = function(user, callback) {
-    var msg = 'Welcome'
+    var msg = 'Welcome' // TODO user is never there... not waiting long enough?
     if (user && user.length > 0) { msg += ', ' + user; }
     msg += '! Latest updates:\n' +
       config.latest_updates
@@ -27,15 +27,16 @@ function Bot(config, youtube) {
     var msg = msg_obj['text'];
     if (msg.starts_with(this.name + ':')) {
       msg = msg.substring(this.name.length + 2, msg.length);
-	  msg = msg.toLowerCase();
+      msg = msg.toLowerCase();
       console.log('bot received new message:', msg);
       var response = '';
       if (msg == 'penis') {
         response = "Dude I don't like dick. I'm not Whit.";
-      } else if ((msg == 'brice sux') || (msg == 'brice sucks'))
-	  {
-		response = "BRICE SUUUUUX";
-	  } else {
+      }
+      else if ((msg == 'brice sux') || (msg == 'brice sucks')) {
+        response = "BRICE SUUUUUX";
+      }
+      else {
         response = "I dunno.";
       }
       callback(bot_msg_obj(response));

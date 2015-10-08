@@ -7,7 +7,7 @@ div
               style='width:300px; margin-right:10px',
               placeholder='Search / video or playlist ID / URL')
         span(class='input-group-btn')
-          button(class='btn btn-default', type='button', id='enqueue', 
+          button(class='btn btn-default', type='button', id='enqueue',
                  data-toggle="tooltip",
                  data-placement="bottom", title="Add to queue")
             span(id='enqueue-icon', class='glyphicon glyphicon-import')
@@ -31,13 +31,13 @@ script.
 
   //TODO: load the controls and player in a deliberate order so one can reflect the other's mute state
   $( document ).ready(function() {
-    draw_mute_status(); 
+    draw_mute_status();
   });
-  
+
   function draw_mute_status()
-  {    
+  {
     var is_muted = get_cookie('muted');
-    if (is_muted == 1) {      
+    if (is_muted == 1) {
       $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-off');
       $('#mute').attr('title', 'Unmute');
     }
@@ -46,7 +46,7 @@ script.
       $('#mute').attr('title', 'Mute');
     }
   }
-  
+
   // e.g. "michelleheafy: Some cool video about someth..."
   function prettify_result(result) {
     var artist = result.snippet.channelTitle
@@ -85,7 +85,7 @@ script.
     // When a user chooses a suggestion (hits enter) start the video
     select: function(event, ui) {
       var event = $.Event("submit");
-      event.video_id = ui.item.value;      
+      event.video_id = ui.item.value;
       $('#load_video').trigger(event);
       return false;
     },
@@ -136,13 +136,13 @@ script.
   // Enqueue
   $('#enqueue').on('click', function(e) {
     var user = get_cookie('username');
-    console.log('sending enqueue for:', user);    
+    console.log('sending enqueue for:', user);
     var event = $.Event("submit");
     event.video_id = $('#omnibox').val();
     $('#load_video').trigger(event);
-    return false;   
+    return false;
   });
-  
+
   // Dequeue
   $('#dequeue').on('click', function(e) {
     var user = get_cookie('username');
@@ -160,15 +160,15 @@ script.
 
   // Mute button
   $('#mute').on('click', function(e) {
-    e.preventDefault();    
+    e.preventDefault();
     var expiration_date = new Date();
     expiration_date.setFullYear(expiration_date.getFullYear() + 1);
     if (player.isMuted()) {
-      player.unMute();      
+      player.unMute();
       document.cookie = 'muted=0; ' + 'expires=' + expiration_date.toGMTString();
     }
     else {
-      player.mute();      
+      player.mute();
       document.cookie = 'muted=1; ' + 'expires=' + expiration_date.toGMTString();
     }
     draw_mute_status();
