@@ -13,13 +13,15 @@ function Bot(config, youtube) {
   }
 
   this.welcome = function(user, callback) {
-    var msg = 'Welcome' // TODO user is never there... not waiting long enough?
-    if (user && user.length > 0) { msg += ', ' + user; }
-    msg += '! Latest updates:\n' +
-      config.latest_updates
+    if (config.latest_updates.length > 0) {
+      var msg = 'Welcome'
+      if (user && user.length > 0) { msg += ', ' + user; }
+      msg += '! Latest updates:\n' +
+        config.latest_updates
         .map(function(str) { return '* ' + str; })
         .join('\n');
-    callback(bot_msg_obj(msg));
+      callback(bot_msg_obj(msg));
+    }
   }
 
   // Provide a callback that accepts a response as a message object
