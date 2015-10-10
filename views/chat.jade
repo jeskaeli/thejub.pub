@@ -29,15 +29,36 @@ script.
       });
     } else {
 
-      // Start with the (bold) user name)
-      var user_b = $('<b>');
-      user_b.css('color', msg_obj.color);
-      user_b.append(document.createTextNode(msg_obj.user));
-      li.append(user_b);
+      // TODO move all styling into stylesheets
+      var heading = $('<p>');
+      heading.css({
+        'margin-bottom': 0
+      });
+
+      // Start with the (bold) user name
+      var user = $('<span>');
+      user.css({
+        'font-weight': 'bold',
+        'color': msg_obj.color,
+        'float': 'left'
+        });
+      user.append(document.createTextNode(msg_obj.user));
+      heading.append(user);
+
+      // Now add a timestamp TODO configurable format
+      var time = $('<span>');
+      time.css({
+        'float': 'right',
+        'color': '#666666'
+      });
+      time.append(document.createTextNode(strftime('%H:%M:%S %p')));
+      heading.append(time);
+
+      // Append heading to chat message
+      li.append(heading);
 
       // Add each line of the message, with <br>'s in between
       for (line of msg_obj.text.split('\n')) {
-        console.log(line);
         li.append('<br>');
         li.append(document.createTextNode(line));
       }
@@ -54,13 +75,12 @@ script.
     } else {
       socket.emit('chat message', {
         user: username,
-        text: msg
+        text: msg,
       });
     }
     $('#chat-input').val('');
     return false;
   });
-
 
   // Chat message received from server
   socket.on('chat message', function(msg_obj) {

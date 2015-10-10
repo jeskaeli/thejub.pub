@@ -21,13 +21,13 @@ function Chat(config, bot) {
 
   // Take in a chat obj sent from the client and turn into something we can
   // emit to display in the chat history
-  var transform_chat = function(msg_obj) {
+  function transform_chat(msg_obj) {
     msg_obj.is_bot = (msg_obj.user == bot.name);
     msg_obj.color = color_for(msg_obj.user);
     return msg_obj
   }
 
-  var process_msg = function(msg_obj, callback) {
+  function process_msg(msg_obj, callback) {
     if (!msg_obj.user)
       return;
 
