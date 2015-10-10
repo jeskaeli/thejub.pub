@@ -9,11 +9,11 @@ chat + shared video
 3. Install the dependencies:
 ```
 $ cd jub.dj
-$ npm install
+$ npm install --loglevel verbose
 ````
 4. Start the server:
 ```
-$ npm start --loglevel verbose
+$ npm start
 ```
 Then visit `http://localhost:3000/` in your browser. You can specify a different port number with:
 ```
