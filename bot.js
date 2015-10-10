@@ -13,7 +13,7 @@ function Bot(config, youtube) {
   }
 
   this.welcome = function(user, callback) {
-    if (config.latest_updates.length > 0) {
+    if (config.latest_updates && config.latest_updates.length > 0) {
       var msg = 'Welcome'
       if (user && user.length > 0) { msg += ', ' + user; }
       msg += '! Latest updates:\n' +
