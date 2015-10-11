@@ -1,8 +1,9 @@
 // Good docs here:
 //   https://developers.google.com/youtube/v3/docs/#resource-types
 var util = require('./util');
+require('./logging')();
 
-function Youtube(config) {
+function GAPI(config) {
   var api_key = config.google_api_key;
   var google = require('googleapis');
   var moment  = require('moment');
@@ -107,5 +108,5 @@ function Youtube(config) {
 }
 
 module.exports = function(config) {
-  return new Youtube(config);
+  return new GAPI(config);
 }

@@ -1,5 +1,6 @@
 var RandBytes = new require('randbytes');
 var crypto = require('crypto');
+require('./logging')();
 
 function Auth(config) {
   this.token_len =  config.auth.token_len

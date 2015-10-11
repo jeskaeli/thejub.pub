@@ -1,7 +1,7 @@
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
-var logger = require('morgan');
+//var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
@@ -9,6 +9,7 @@ var routes = require('./routes/index');
 
 var config = require('./config');
 var app = express();
+require('./logging')(app);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -17,7 +18,7 @@ app.locals.pretty = true;
 
 // uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+//app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -64,10 +65,10 @@ app.use(function(err, req, res, next) {
 app.auth = require('./auth')(config);
 app.models = require('./models')(config, app.auth);
 app.db = require('./db')(config, app.models);
-app.youtube = require('./youtube')(config); // doesn't need to be an app member
-app.bot = require('./bot')(config, app.youtube);
+app.gapi = require('./gapi')(config); // doesn't need to be an app member
+app.bot = require('./bot')(config, app.gapi);
 app.chat = require('./chat')(config, app.bot);
-app.jub = require('./jub_dj')(config, app.youtube, app.chat);
+app.jub = require('./jub_dj')(config, app.gapi, app.chat);
 app.config = config;
 
 // Note: in ./bin/www -> socket-routing.js, the jub receives a callback

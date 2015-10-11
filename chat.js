@@ -1,11 +1,14 @@
 var util = require('./util')
 var crypto = require('crypto');
+require('./logging')();
 util.monkey_patch();
 
 // TODO unify this API - functions expect different kinds of callbacks
 function Chat(config, bot) {
   this.bot = bot;
   var color_map = {};
+  var broadcast = function() {};
+  var whisper = function() {};
 
   // Sets or returns an initial color for the user
   function color_for(user, color) {
@@ -68,7 +71,13 @@ function Chat(config, bot) {
   // this is a way for us to initiate a message without such a callback.
   // TODO chat should also have callbacks available for whispering
   this.set_broadcast_callback = function(callback) {
-    this.broadcast_msg_obj = function(msg_obj) {
+    broadcast = function(msg_obj) {
+      callback('chat message', transform_chat(msg_obj));
+    }
+  }
+
+  this.set_whisper_callback = function(callback) {
+    whipser = function(msg_obj) {
       callback('chat message', transform_chat(msg_obj));
     }
   }
@@ -86,12 +95,12 @@ function Chat(config, bot) {
 
   // When there's a new video state, tell the bot and broadcast what he says
   this.video_started = function(new_state) {
-    bot.video_started(new_state, this.broadcast_msg_obj);
+    bot.video_started(new_state, broadcast);
   }
 
   // When a video is skipped, tell the bot and broadcast what he says
   this.video_skipped = function(user) {
-    bot.video_skipped(user, this.broadcast_msg_obj);
+    bot.video_skipped(user, broadcast);
   }
 
 }

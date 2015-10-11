@@ -1,0 +1,30 @@
+nav(class='navbar navbar-inverse navbar-fixed-bottom'
+    id='bottom-nav')
+  ul(class='nav navbar-nav navbar-left')
+    li
+      a(href='https://github.com/aromatt/jub.dj/issues',
+        target="_blank") Github issues
+  form(class='navbar-form navbar-right', id='chat', action='')
+    div(class='input-group input-group-md')
+      input(class='form-control jub-nav-input', id='chat-input', autocomplete='off',
+            placeholder='Chat')
+
+script.
+
+  // Client chat message submission
+  $('#chat').submit(function() {
+    var msg = $('#chat-input').val();
+    var username = get_cookie('username');
+    if (username == '') {
+      alert('You must be logged in to chat.')
+    } else {
+      socket.emit('chat message', {
+        user: username,
+        text: msg,
+      });
+    }
+    $('#chat-input').val('');
+    return false;
+  });
+
+
