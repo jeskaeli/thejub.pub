@@ -1,28 +1,27 @@
-div
-  // row of controls http://jsfiddle.net/Supergibbs/282ze/
-  div(id='controls')
-    form(class='form-group form-inline', id='load_video', action='')
-      div(class='input-group input-group-md')
-        input(class='form-control', id='omnibox',
-              style='width:300px; margin-right:10px',
-              placeholder='Search / video or playlist ID / URL')
-        span(class='input-group-btn')
-          button(class='btn btn-default', type='button', id='enqueue',
-                 data-toggle="tooltip",
-                 data-placement="bottom", title="Add to queue")
-            span(id='enqueue-icon', class='glyphicon glyphicon-import')
-          button(class='btn btn-default', type='button', id='dequeue',
-                 data-toggle='tooltip',
-                 data-placement='bottom', title='Remove last video')
-            span(id='dequeue-icon', class='glyphicon glyphicon-export')
-          button(class='btn btn-default',type='button',
-                 id='skip', data-toggle='tooltip',
-                 data-placement='bottom', title='Skip')
-            span(id='skip-icon', class='glyphicon glyphicon-fast-forward')
-          button(class='btn btn-default', type='button',
-                 id='mute', data-toggle='mute',
-                 data-placement='bottom', title='Mute')
-            span(id='mute-icon', class='glyphicon glyphicon-volume-up')
+// row of controls http://jsfiddle.net/Supergibbs/282ze/
+div(id='controls')
+  form(class='form-group form-inline', id='load_video', action='')
+    div(class='input-group input-group-md')
+      input(class='form-control', id='omnibox',
+            style='width:300px; margin-right:10px',
+            placeholder='Search / video or playlist ID / URL')
+      span(class='input-group-btn')
+        button(class='btn btn-default', type='button', id='enqueue',
+               data-toggle="tooltip",
+               data-placement="bottom", title="Add to queue")
+          span(id='enqueue-icon', class='glyphicon glyphicon-import')
+        button(class='btn btn-default', type='button', id='dequeue',
+               data-toggle='tooltip',
+               data-placement='bottom', title='Remove last video')
+          span(id='dequeue-icon', class='glyphicon glyphicon-export')
+        button(class='btn btn-default',type='button',
+               id='skip', data-toggle='tooltip',
+               data-placement='bottom', title='Skip')
+          span(id='skip-icon', class='glyphicon glyphicon-fast-forward')
+        button(class='btn btn-default', type='button',
+               id='mute', data-toggle='mute',
+               data-placement='bottom', title='Mute')
+          span(id='mute-icon', class='glyphicon glyphicon-volume-up')
 
 script.
 
@@ -174,3 +173,5 @@ script.
     draw_mute_status();
     return false;
   });
+
+

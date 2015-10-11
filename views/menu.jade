@@ -1,53 +1,7 @@
 div(class='row')
-  form(class='form-group', id='auth', action='')
-    div(class='col-xs-12')
-      label(for='username') Username
-      input(class='form-control', id='username',
-            style='margin:0 0 10px 0;')
-      button(class='btn btn-default') Submit
-      br
-      br
-      label(for='current-users') Who's jubbin':
-      ul(id='current-users')
+  label(for='current-users') Who's jubbin':
+  ul(id='current-users')
 div(class='row', style='bottom:30px; position:fixed;')
   div(class='col-xs-12')
     a(href='https://github.com/aromatt/jub.dj/issues',
       target="_blank") Report bug or request feature
-script.
-
-  var get_username = function() {
-    return get_cookie('username') || 'someone';
-  }
-
-  // Username input box
-  $('#auth').submit(function() {
-    var username = $('#username').val();
-    console.log('submitting username', username);
-
-    var expiration_date = new Date();
-    expiration_date.setFullYear(expiration_date.getFullYear() + 1);
-    document.cookie = 'username=' + username + "; " +
-                      'expires=' + expiration_date.toGMTString();
-    socket.emit('user update', username);
-    return false;
-  });
-
-  // Message from server saying who's connected
-  socket.on('current users', function(users) {
-    $('#current-users').empty();
-    console.log('users', users);
-    for (user of users) {
-      console.log('user', user);
-      $('#current-users').append($('<li>').text(user));
-    }
-  });
-
-  // Document is loaded so cookies are probably ready
-  $( document ).ready(function() {
-    socket.emit('user loaded', get_username());
-  });
-
-  // Server is asking who is present
-  socket.on('ping users', function() {
-    socket.emit('user present', get_username());
-  });

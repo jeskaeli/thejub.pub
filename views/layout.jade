@@ -5,20 +5,26 @@ html(lang="en")
     script.
       var socket = io();
   body
-    div(class='container-fluid')
+    div(class='container-fluid jub-container')
       div(class='page-header')
         div(class='row')
           div(class='col-md-6')
             include ./controls.jade
+          div(class='col-md-2')
+          div(class='col-md-2')
+            include ./username.jade
           span(id='title', style='font-size:36px;') jub.dj
-        //h1= title
-      div(class='row')
-        div(class='col-md-2')
+
+      // Main page content
+      div(class='row', id='jub-row-main')
+        div(class='col-md-2', id='jub-col-menu')
           include ./menu.jade
 
-        div(class='col-md-6')
+        div(class='col-md-6', id='jub-col-player')
           include ./player.jade
           include ./queue.jade
 
-        div(class='col-md-4')
+        div(class='col-md-4', id='jub-col-chat')
           include ./chat.jade
+
+include ./resizing.jade

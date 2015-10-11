@@ -1,0 +1,24 @@
+script.
+  // Monolothic resizing for the whole page
+  function refresh_sizes() {
+    var main_row_top = $('#jub-row-main').position().top;
+    var main_row_height = $(window).height() - main_row_top - 10;
+    $('#jub-row-main').innerHeight(main_row_height);
+
+    // Chat messages
+    var msgs_height = $('#chat-input').position().top - main_row_top -
+                      parseInt($('#chat-input').css('bottom'), 10);
+    $('#messages').innerHeight(msgs_height);
+    $('#messages').trigger('update_scroll');
+
+    // Chat input width TODO can't get this to work with just style sheets
+    $('#chat-input').outerWidth($('#messages').width());
+  }
+
+  $( window ).resize(function() {
+    refresh_sizes();
+  });
+
+  $( document ).ready(function() {
+    refresh_sizes();
+  });

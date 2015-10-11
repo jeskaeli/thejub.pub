@@ -1,13 +1,26 @@
 ul(id="messages", class="jub-list")
-div(class='row')
-  form(class='form-inline', id='chat', action='')
-    div(class='col-md-10')
-      input(class='form-control', id='chat-input',
-            style='width: 100%;', autocomplete='off')
-    div(class='col-md-2')
-      button(class='btn btn-default') Send
+div
+  form(class='form-group form-inline', id='chat', action='')
+    div(class='input-group input-group-md')
+      input(class='form-control', id='chat-input', autocomplete='off')
 
 script.
+
+  var scrolled_up = false;
+
+  // Scroll chat to bottom if needed
+  $('#messages').bind('update_scroll',function() {
+    if (!scrolled_up) {
+      this.scrollTop = this.scrollHeight;
+    }
+  });
+
+  // Called whenever chat box is scrolled, including on window resizes
+  $('#messages').scroll(function() {
+    var elem = $( this );
+    var max_height = parseInt(elem.css('max-height'), 10);
+    scrolled_up = (Math.abs(this.scrollHeight - this.scrollTop - elem.height()) > 10);
+  });
 
   var save_color = function(color) {
     var expiration_date = new Date();
@@ -110,23 +123,11 @@ script.
 
     console.log('received chat', msg_obj);
     var list = $('#messages');
-
-    // Before appending, note the height of the history.
-    var old_y = list.height();
-    var max_y = parseInt(list.css('max-height'), 10);
-    var at_bottom = (Math.abs(list[0].scrollHeight - list[0].scrollTop - max_y) < 10);
-    console.log(list[0].scrollTop, list[0].scrollHeight, old_y, max_y, at_bottom);
-
     var chat_li = new_chat_li(msg_obj);
-
     list.append(chat_li);
     var new_y = list.height();
 
-    // If the chat box is newly scrolling or we were already scrolled to the
-    // bottom, scroll to the bottom
-    if ((old_y < max_y) && (new_y >= max_y) || at_bottom) {
-      list[0].scrollTop = list[0].scrollHeight;
-    }
+    $('#messages').trigger('update_scroll');
   });
 
   // Load the username color cookie and send a message to the server's chat
@@ -141,4 +142,3 @@ script.
       })
     }
   });
-
