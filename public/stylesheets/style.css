@@ -49,6 +49,7 @@ body {
   list-style-type: none;
   margin: 0;
   padding: 0;
+  word-wrap: break-word;
 }
 .jub-list li {
   padding: 5px 10px;
