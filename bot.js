@@ -1,6 +1,7 @@
 require('./util').monkey_patch();
+require('./logging')();
 
-function Bot(config, youtube) {
+function Bot(config, gapi) {
   this.name = "jubbot";
   console.log('bot initialized with name', this.name);
   var bot = this;
@@ -13,11 +14,15 @@ function Bot(config, youtube) {
   }
 
   this.welcome = function(user, callback) {
-    if (config.latest_updates && config.latest_updates.length > 0) {
+    if (config.latest_updates && config.latest_updates.list.length > 0) {
       var msg = 'Welcome'
       if (user && user.length > 0) { msg += ', ' + user; }
-      msg += '! Latest updates:\n' +
-        config.latest_updates
+      msg += '!\nLatest updates';
+      if (config.latest_updates.date) {
+        msg += ' (' + config.latest_updates.date + ')';
+      }
+      msg += ':\n' +
+        config.latest_updates.list
         .map(function(str) { return '* ' + str; })
         .join('\n');
       callback(bot_msg_obj(msg));
@@ -46,7 +51,7 @@ function Bot(config, youtube) {
   }
 
   this.video_started = function(video_obj, callback) {
-    youtube.video_specs(video_obj, function(obj) {
+    gapi.video_specs(video_obj, function(obj) {
       if (obj.title) {
         var msg = obj.user + ' started "' + obj.title + '"'
         callback(bot_msg_obj(msg));
@@ -60,6 +65,6 @@ function Bot(config, youtube) {
   }
 }
 
-module.exports = function(config, youtube) {
-  return new Bot(config, youtube);
+module.exports = function(config, gapi) {
+  return new Bot(config, gapi);
 }

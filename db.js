@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+require('./logging')();
 
 // Returns a mongoose connection
 function DB(config, models) {

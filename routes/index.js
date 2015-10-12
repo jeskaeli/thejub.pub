@@ -4,8 +4,6 @@ var util = require('../util');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  console.log('route', req.route);
-  console.log('path', req.path);
   if (req.path == '/') {
     res.render('index', {
       title: 'jub.dj'

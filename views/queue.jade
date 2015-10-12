@@ -1,17 +1,23 @@
+label(for='video-queue', id='queue-label') Queue:
 ul(id="video-queue", class="jub-list")
 script.
   // Server tells us about video state changes
   socket.on('queue', function(queue) {
-    console.log('queue', queue);
-    $('#video-queue').empty();
-    for (video of queue) {
-      var item = $('<li>').text(video['user'] + ': ' + video['title']);
-      $('#video-queue').prepend(item);
+    console.log('got queue state', queue);
+    if (queue && queue.length > 0) {
+      console.log('queue', queue);
+      $('#video-queue').empty();
+      for (video of queue) {
+        var item = $('<li>').text(video['title']);
+        $('#video-queue').prepend(item);
+      }
     }
   });
 
-  // Document is loaded so we can populate our video queue
+  // Document is loaded so we can populate our video queue.
   $( document ).ready(function() {
-    socket.emit('queue', 0);
+    console.log('requesting queue state', get_username());
+    $('#queue-label').text(get_username() + "'s queue:");
+    socket.emit('queue', get_username());
   });
 

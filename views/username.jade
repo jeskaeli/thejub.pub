@@ -1,10 +1,3 @@
-div(id='username_stuff')
-  // Username, join waitlist
-  form(class='form-group form-inline', id='auth', action='')
-    input(class='form-control', id='username',
-          style='margin:0 0 10px 0;',
-          placeholder='User name', autocomplete='off')
-
 script.
   // User name stuff
   var get_username = function() {
@@ -23,16 +16,6 @@ script.
     socket.emit('user update', username);
     $('#username').val('');
     return false;
-  });
-
-  // Message from server saying who's connected
-  socket.on('current users', function(users) {
-    $('#current-users').empty();
-    console.log('users', users);
-    for (user of users) {
-      console.log('user', user);
-      $('#current-users').append($('<li>').text(user));
-    }
   });
 
   // Document is loaded so cookies are probably ready

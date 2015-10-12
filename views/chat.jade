@@ -1,8 +1,4 @@
 ul(id="messages", class="jub-list")
-div
-  form(class='form-group form-inline', id='chat', action='')
-    div(class='input-group input-group-md')
-      input(class='form-control', id='chat-input', autocomplete='off')
 
 script.
 
@@ -78,22 +74,6 @@ script.
     }
     return li;
   }
-
-  // Client chat message submission
-  $('#chat').submit(function() {
-    var msg = $('#chat-input').val();
-    var username = get_cookie('username');
-    if (username == '') {
-      alert('You must be logged in to chat.')
-    } else {
-      socket.emit('chat message', {
-        user: username,
-        text: msg,
-      });
-    }
-    $('#chat-input').val('');
-    return false;
-  });
 
   // Chat message received from server
   socket.on('chat message', function(msg_obj) {

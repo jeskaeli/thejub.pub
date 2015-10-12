@@ -5,8 +5,9 @@ html(lang="en")
     script.
       var socket = io();
   body
-    div(class='container-fluid jub-container')
-      div(class='page-header')
+    div(class='container-fluid', id='jub-container')
+      include ./top.jade
+      //div(class='page-header')
         div(class='row')
           div(class='col-md-6')
             include ./controls.jade
@@ -17,14 +18,18 @@ html(lang="en")
 
       // Main page content
       div(class='row', id='jub-row-main')
-        div(class='col-md-2', id='jub-col-menu')
-          include ./menu.jade
+        div(class='col-md-3', id='jub-col-queue')
+          include ./queue.jade
 
         div(class='col-md-6', id='jub-col-player')
           include ./player.jade
-          include ./queue.jade
+          include ./menu.jade
 
-        div(class='col-md-4', id='jub-col-chat')
+        div(class='col-md-3', id='jub-col-chat')
           include ./chat.jade
 
+    // Outside of the container
+    include ./bottom.jade
+
+// Just javascript
 include ./resizing.jade
