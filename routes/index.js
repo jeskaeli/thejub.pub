@@ -5,8 +5,13 @@ var util = require('../util');
 /* GET home page. */
 router.get('/', function(req, res, next) {
   if (req.path == '/') {
-    res.render('index', {
-      title: 'jub.dj'
+    res.render('index', { title: 'jub.dj' }, function(err, html) {
+      if (err) {
+        console.error(err.message);
+        next.send(html);
+      } else {
+        res.send(html);
+      }
     });
   }
 });
