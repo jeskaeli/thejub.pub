@@ -1,6 +1,7 @@
 ul(id="messages", class="jub-list")
 
 script.
+  var last_user = "";
 
   var scrolled_up = false;
 
@@ -103,8 +104,16 @@ script.
 
     console.log('received chat', msg_obj);
     var list = $('#messages');
-    var chat_li = new_chat_li(msg_obj);
-    list.append(chat_li);
+    if(msg_obj.user != last_user) {
+      last_user = msg_obj.user;
+      var chat_li = new_chat_li(msg_obj);
+      list.append(chat_li);
+    } else {
+      for (line of msg_obj.text.split('\n')) {
+        list.find('li').last().append('<br>');
+        list.find('li').last().append(document.createTextNode(line));        
+      }
+    }
     var new_y = list.height();
 
     $('#messages').trigger('update_scroll');
