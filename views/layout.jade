@@ -7,14 +7,6 @@ html(lang="en")
   body
     div(class='container-fluid', id='jub-container')
       include ./top.jade
-      //div(class='page-header')
-        div(class='row')
-          div(class='col-md-6')
-            include ./controls.jade
-          div(class='col-md-2')
-          div(class='col-md-2')
-            include ./username.jade
-          span(id='title', style='font-size:36px;') jub.dj
 
       // Main page content
       div(class='row', id='jub-row-main')
@@ -31,5 +23,6 @@ html(lang="en")
     // Outside of the container
     include ./bottom.jade
 
-// Just javascript
-include ./resizing.jade
+// Javascript-only files
+script(src='/javascripts/resizing.js')
+script(src='/javascripts/global.js')
