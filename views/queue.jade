@@ -4,7 +4,7 @@ script.
   // Server tells us about video state changes
   socket.on('queue', function(queue) {
     console.log('got queue state', queue);
-    if (queue && queue.length > 0) {
+    if (queue) {
       console.log('queue', queue);
       $('#video-queue').empty();
       for (video of queue) {
