@@ -5,3 +5,8 @@
 $('.btn').on('click', function(e) {
   this.blur();
 });
+
+socket.on('force reload', function(obj) {
+  console.log('force reload')
+  location.reload();
+});
