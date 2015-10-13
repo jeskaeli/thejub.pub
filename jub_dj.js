@@ -12,12 +12,12 @@ function JubDJ(config, gapi, chat) {
     start_time: Date.now(),
     duration: 0
   }
-  var video_queues = Map(); // username --> video queue
-  var dj_sched = []; // circular buffer of users signed up to DJ
-  var current_users = new Set();
-  var user_sockets = {};
+  var video_queues = Map();      // username --> video queue
+  var dj_sched = [];             // circular buffer of users signed up to DJ
+  var current_users = new Set(); // users present in room
+  var users_seen = new Set();    // for forcing reloads
   var broadcast = function() {}; // This will be set later by the socketeer
-  var whisper = function() {}; // This will be set later by the socketeer
+  var whisper = function() {};   // This will be set later by the socketeer
   var jub = this;
 
   // Sum of DJs' queue sizes
@@ -196,9 +196,14 @@ function JubDJ(config, gapi, chat) {
   // Kinda weird that this fn has some knowledge about what the caller is going
   // to do next, but on the other hand the caller needs to pass in a callback
   // so that it can do its next task with the up-to-date data.
+  // TODO get rid of callbacks from socket-routing, just call broadcast or whatever
   this.add_user = function(user, socket, callback) {
-    user_sockets[user] = socket;
     current_users.add(user);
+    if (!users_seen.has(user)) {
+      users_seen.add(user);
+      console.log('force reload', user)
+      socket.emit('force reload');
+    }
     callback(current_users.toArray());
   }
 
