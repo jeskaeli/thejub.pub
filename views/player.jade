@@ -1,28 +1,46 @@
-div(id='player', class='flex-centered')
+div(class='panel panel-default', id='player-panel')
+  table(class='table', id='player-banner')
+    tbody
+      tr
+        th(id='current-dj-name')
+        th(id='current-track') No one is playing.
+        th(id='time-left')
+  div(class='panel-body')
+    div(id='player')
+  //div(class='panel-footer' id='player-footer') No videos queued. TODO
 
 script.
 
+  var player_ready = false;
   var my_video_state = {};
 
   // Start the specified video, starting at the correct time
   function apply_video_state(state) {
-    id = state['id'];
-    start_time = state['start_time'];
-    user = state['user'];
-    if (my_video_state['id'] != id ||
-        my_video_state['start_time'] != start_time) {
+    if (!player_ready)
+      return;
+    var id = state.id;
+    var start_time = state.start_time;
+    var user = state.user;
+    if (my_video_state.id != id ||
+        my_video_state.start_time != start_time) {
       my_video_state = {
+        title: state.title,
+        duration: state.duration,
+        user_color: state.user_color,
         user: user,
         id: id,
-        start_time: start_time
+        start_time: start_time,
       };
-      video_progress = (state['server_time'] - start_time) / 1000;
+      var video_progress = (state.server_time - start_time) / 1000;
       console.log("apply video state", id, video_progress);
       player.loadVideoById({
         'videoId': id,
         'startSeconds': video_progress,
         'suggestedQuality': 'large'
       });
+      update_time_left();
+      update_current_dj(state.user, state.user_color);
+      update_current_track(state.title);
     }
   }
 
@@ -30,6 +48,68 @@ script.
   socket.on('video state', function(video_state) {
     apply_video_state(video_state);
   });
+
+  function update_current_track(title) {
+    var track = $('#current-track');
+    track.text(my_video_state.title);
+    var width = $('#player-panel-heading').width() -
+                parseInt($('#player-panel-heading').css('padding-right'), 10) -
+                parseInt($('#player-panel-heading').css('padding-left'), 10) -
+                $('#current-dj-name').outerWidth() -
+                $('#time-left').outerWidth();
+    console.log('truncating to width', width);
+    track.truncate({
+        width: 'auto',
+        token: '...',
+        side: 'right',
+        multiline: false
+    });
+  }
+
+  function update_current_dj(user, color) {
+    var dj = $('#current-dj-name');
+    if (user) {
+      dj.css({
+        'font-weight': 'bold',
+        'float': 'left'
+      });
+      if (color) {
+        dj.css({'color': color})
+      }
+      dj.text(user);
+      dj.truncate({
+        width: '100px',
+        token: '...',
+        side: 'right',
+        multiline: false
+      });
+    }
+  }
+
+  function update_time_left() {
+    this.time = new Date(1970, 1, 1); // Unix epoch
+    var elem = $('#time-left');
+    var hide = false;
+    var seconds_left = player.getDuration() - player.getCurrentTime();
+    if (player_ready) {
+      if (player.getDuration() > 0 && player.getCurrentTime() > 0) {
+        this.time.setSeconds(seconds_left);
+      } else {
+        this.time.setSeconds(0);
+        hide = true;
+      }
+    } else {
+      hide = false;
+    }
+    var format = seconds_left >= 3600 ? '%k:%M:%S' : '%M:%S';
+    elem.text(strftime(format, this.time));
+    if (hide) {
+      elem.css('visibility','hidden')
+    } else {
+      elem.css('visibility','visible')
+    }
+  }
+  setInterval(update_time_left, 1000);
 
   /* Everything below here is boilerplate for the Google YT IFrame */
 
@@ -73,6 +153,7 @@ script.
       console.log('is not muted');
       player.unMute();
     }
+    player_ready = true;
     socket.emit('video state', 0);
     refresh_sizes(true);
   }

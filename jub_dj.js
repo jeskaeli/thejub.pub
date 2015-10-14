@@ -81,7 +81,7 @@ function JubDJ(config, gapi, chat) {
   }
   setInterval(rotate_videos, 1000);
 
-  // Enqueue a single video
+  // Enqueue a single video for a user
   this.enqueue_video = function(video_obj, callback) {
     var user = video_obj.user;
     if (user) {
@@ -159,6 +159,9 @@ function JubDJ(config, gapi, chat) {
       title: video_state.title,
       start_time: video_state.start_time,
       server_time: Date.now(),
+      duration: video_state.duration,
+      user: video_state.user,
+      user_color: chat.color_for(video_state.user),
     }
   }
 
@@ -241,14 +244,9 @@ module.exports = function(config, gapi, chat) {
     id: 'ELAs5Q8Itfs', // TODO different placeholder
     user: chat.bot.name
   };
-  var third_video = {
-    id: 'ELAs5Q8Itfs', // TODO different placeholder
-    user: chat.bot.name
-  };
 
   jub.enqueue_video(first_video);
   jub.enqueue_video(second_video);
-  jub.enqueue_video(third_video);
   jub.add_dj(chat.bot.name);
 
   return jub
