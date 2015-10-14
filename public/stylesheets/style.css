@@ -43,8 +43,8 @@ body {
   color: #DDDDEE;
   padding-right: 20px;
   margin-top: 0;
-  /*right: 50px;*/
 }
+
 
 .form-control {
   border: 0px;
@@ -58,14 +58,6 @@ body {
   border-color: #3F2C52;
   color: #fff;
   font-size: 13px;
-}
-
-.flex-centered {
-  float: none;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display:         flex;
 }
 
 /* jub-style lists */
@@ -82,12 +74,41 @@ body {
 }
 .jub-list li:nth-child(odd) { background: #1C1C1C; }
 
-/* video player */
-#player {
-  margin: auto;
+/* player */
+#player-panel {
+  border: 0;
+  width: 484px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 0px;
+}
+#player-panel * {
+  border: 0;
+  background-color: #111;
+  color: #DDDDEE;
+}
+#player-panel .panel-body {
+  padding: 0 0 0 0;
+  height: 290px;
+}
+#player-panel .panel-title {
+  font-size: 13px;
+}
+#player-panel .panel-footer {
+  font-size: 12px;
+}
+#player-panel th {
+  padding: 5px 5px 5px 5px;
+}
+#current-track {
+  font-weight: normal;
+}
+#time-left {
+  min-width: 55px;
+  text-align: right;
 }
 
-
+/* top navbar */
 .jub-nav-top-item {
   top: 5px;
 }
@@ -115,7 +136,7 @@ body {
 
 /* current users */
 #jubbin-list-div {
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
 #jubbin-list {

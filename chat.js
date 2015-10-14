@@ -9,9 +9,10 @@ function Chat(config, bot) {
   var color_map = {};
   var broadcast = function() {};
   var whisper = function() {};
+  var chat = this;
 
   // Sets or returns an initial color for the user
-  function color_for(user, color) {
+  this.color_for = function(user, color) {
     if (color) {
       color_map[user] = color;
     } else if (!color_map[user]) {
@@ -26,7 +27,7 @@ function Chat(config, bot) {
   // emit to display in the chat history
   function transform_chat(msg_obj) {
     msg_obj.is_bot = (msg_obj.user == bot.name);
-    msg_obj.color = color_for(msg_obj.user);
+    msg_obj.color = chat.color_for(msg_obj.user);
     return msg_obj
   }
 
@@ -36,8 +37,8 @@ function Chat(config, bot) {
 
     // User is setting its color; stop after setting the color
     if (msg_obj.text.starts_with('/color ')) {
-      color_for(msg_obj.user, msg_obj.text.substring(7, msg_obj.text.length));
-      console.log(msg_obj.user, 'set color to', color_for(msg_obj.user));
+      chat.color_for(msg_obj.user, msg_obj.text.substring(7, msg_obj.text.length));
+      console.log(msg_obj.user, 'set color to', chat.color_for(msg_obj.user));
       return;
     }
 

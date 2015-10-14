@@ -1,5 +1,15 @@
 script.
-  // User name stuff
+
+  // Any desired effects of changing username should go in here
+  var update_username = function(username) {
+    var expiration_date = new Date();
+    expiration_date.setFullYear(expiration_date.getFullYear() + 1);
+    document.cookie = 'username=' + username + "; " +
+                      'expires=' + expiration_date.toGMTString();
+    socket.emit('user update', username);
+    $('#queue-label').text(username + "'s queue:");
+  }
+
   var get_username = function() {
     return get_cookie('username') || 'someone';
   }
@@ -8,12 +18,7 @@ script.
   $('#auth').submit(function() {
     var username = $('#username').val();
     console.log('submitting username', username);
-
-    var expiration_date = new Date();
-    expiration_date.setFullYear(expiration_date.getFullYear() + 1);
-    document.cookie = 'username=' + username + "; " +
-                      'expires=' + expiration_date.toGMTString();
-    socket.emit('user update', username);
+    update_username(username);
     $('#username').val('');
     return false;
   });
