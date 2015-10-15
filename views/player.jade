@@ -18,6 +18,8 @@ script.
   function apply_video_state(state) {
     if (!player_ready)
       return;
+    if (Object.keys(state) == 0)
+      return;
     var id = state.id;
     var start_time = state.start_time;
     var user = state.user;

@@ -13,9 +13,11 @@ function Chat(config, bot) {
 
   // Sets or returns an initial color for the user
   this.color_for = function(user, color) {
+    if (!user)
+      return "#FFFFFF";
     if (color) {
       color_map[user] = color;
-    } else if (!color_map[user]) {
+    } else if (user && !color_map[user]) {
       var hash = crypto.createHash('md5');
       hash.update(user);
       color_map[user] = '#' + hash.digest('hex').slice(3,9);
