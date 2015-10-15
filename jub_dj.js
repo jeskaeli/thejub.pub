@@ -34,9 +34,9 @@ function JubDJ(config, gapi, chat) {
   var skip_idle_djs = function() {
     console.log('skipping idle', dj_sched);
     if (dj_sched.length > 1 && sum_videos_queued() > 0) {
-      while (video_queues.get(dj_sched[0]).length == 0) {
-        console.log('checking dj', dj_sched[0], 'who has',
-                    video_queues.get(dj_sched[0]).length);
+      while (!video_queues.has(dj_sched[0]) ||
+             video_queues.get(dj_sched[0]).length == 0) {
+        console.log('skipping dj', dj_sched[0]);
         dj_sched.push(dj_sched.shift());
         // REALLY don't want to get stuck looping forever
         if (sum_videos_queued() == 0)
@@ -216,6 +216,13 @@ function JubDJ(config, gapi, chat) {
 
   this.video_search = function(query, callback) {
     gapi.video_search(query, callback);
+  }
+
+  // This can eventually be used for all user data and hook into the DB
+  this.user_data_for = function(user) {
+    return {
+      dj: (dj_sched.indexOf(user) > -1),
+    }
   }
 
   this.new_chat_message = function(query, callback) {

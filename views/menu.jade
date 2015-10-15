@@ -6,9 +6,7 @@ script.
   // Message from server saying who's connected
   socket.on('current users', function(users) {
     $('#jubbin-list').empty();
-    console.log('users', users);
     for (user of users) {
-      console.log('user', user);
       $('#jubbin-list').append($('<li>').text(user));
     }
   });

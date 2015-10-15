@@ -1,5 +1,4 @@
 nav(class='navbar navbar-inverse navbar-fixed-top' id='top-nav')
-  //div(class='container-fluid')
   form(class='navbar-form form-group navbar-left',
        id='load_video', action='')
 
@@ -52,19 +51,32 @@ script.
 
   //TODO: load the controls and player in a deliberate order so one can reflect the other's mute state
   $( document ).ready(function() {
-    draw_mute_status();
+    draw_mute_state();
   });
 
-  function draw_mute_status()
-  {
+  function draw_mute_state() {
     var is_muted = get_cookie('muted');
     if (is_muted == 1) {
       $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-off');
       $('#mute').attr('title', 'Unmute');
-    }
-    else {
+    } else {
       $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-up');
       $('#mute').attr('title', 'Mute');
+    }
+  }
+
+  function draw_dj_state() {
+    var elem = $('#join-dj');
+    if (djing) {
+      elem.css('background', '#2DB85A');
+      elem.css('color', '#000');
+      $('#join-dj-icon').attr('class', 'glyphicon glyphicon-headphones');
+      $('#join-dj').attr('title', 'Stop DJing');
+    } else {
+      elem.css('background', '#3F2C52');
+      elem.css('color', '#FFFFFF');
+      $('#join-dj-icon').attr('class', 'glyphicon glyphicon-user');
+      $('#join-dj').attr('title', 'Click to DJ');
     }
   }
 
@@ -191,28 +203,27 @@ script.
       player.mute();
       document.cookie = 'muted=1; ' + 'expires=' + expiration_date.toGMTString();
     }
-    draw_mute_status();
+    draw_mute_state();
     return false;
   });
 
+  // DJ button
   $('#join-dj').on('click', function() {
-    var elem = $( this );
     if (!djing) {
       socket.emit('add dj', get_username());
       console.log("add dj");
       djing = true;
-      elem.css('background', '#2DB85A');
-      elem.css('color', '#000');
-      $('#join-dj-icon').attr('class', 'glyphicon glyphicon-headphones');
-      $('#join-dj').attr('title', 'Stop DJing');
     } else {
       socket.emit('remove dj', get_username());
       console.log("remove dj");
       djing = false;
-      elem.css('background', '#3F2C52');
-      elem.css('color', '#FFFFFF');
-      $('#join-dj-icon').attr('class', 'glyphicon glyphicon-user');
-      $('#join-dj').attr('title', 'Click to DJ');
     }
+    draw_dj_state();
+  });
 
+  // Server has some user data for us
+  socket.on('user data', function(data) {
+    console.log('received user data:', data);
+    djing = data.dj;
+    draw_dj_state();
   });
