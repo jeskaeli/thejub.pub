@@ -69,14 +69,14 @@ function JubDJ(config, gapi, chat) {
           next_video.start_time = Date.now();
           console.log('starting next video:', next_video['id']);
           jub.update_video_state(next_video);
-
-          // Tell the clients to start the new video
-          broadcast('video state', jub.emittable_video_state());
-
           // Send the new DJ his updated queue
           whisper(new_dj, 'queue', jub.emittable_queue_for(new_dj));
         }
       }
+      // Tell the clients about the updated state. Even if we didn't enqueue
+      // a new video, we still need to send this out because someone might have
+      // pressed 'skip'
+      broadcast('video state', jub.emittable_video_state());
     }
   }
   setInterval(rotate_videos, 1000);
@@ -141,7 +141,7 @@ function JubDJ(config, gapi, chat) {
   // started by someone who has left the room.
   this.video_skipped = function(user) {
     if (user == video_state.user || dj_sched.indexOf(video_state.user) < 0) {
-      video_state.duration = 0;
+      video_state.start_time = Date.now() - video_state.duration;
       chat.video_skipped(user);
     }
   }
