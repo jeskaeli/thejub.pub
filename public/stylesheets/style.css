@@ -133,6 +133,25 @@ body {
 #video-queue {
   overflow-y:auto;
 }
+#video-queue .queue-item * {
+  font-weight: normal;
+  padding: 0px 0px 0px 0px;
+  overflow-y:auto;
+}
+
+/* NOTE if you update these spacing values, update redraw_queue_items */
+#video-queue li{
+  padding: 3px 3px 3px 3px;
+}
+#video-queue .queue-item .title {
+  margin-right: 4px;
+}
+#video-queue .queue-item .duration {
+  min-width: 55px;
+  text-align: right;
+  float: right;
+}
+
 
 /* current users */
 #jubbin-list-div {

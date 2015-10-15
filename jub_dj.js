@@ -91,8 +91,8 @@ function JubDJ(config, gapi, chat) {
           if (!video_queues.has(user)) {
             video_queues.set(user, Deque());
           }
-          video_queues.get(user).unshift(video_obj);
-          console.log(user, 'enqueued video:', util.inspect(video_obj));
+          video_queues.get(user).unshift(obj);
+          console.log(user, 'enqueued video:', obj.title);
           whisper(user, 'queue', jub.emittable_queue_for(user));
         } else {
           console.log('failed to find info for video', video_obj.id);
@@ -101,14 +101,59 @@ function JubDJ(config, gapi, chat) {
     }
   }
 
+  // Enqueue a list of videos for a user. Identical to enqueue_video except it
+  // does not message the client until it's done fetching info for all videos.
+  this.enqueue_videos = function(video_list, callback) {
+  }
+
   // Add an entire playlist to the queue
   this.enqueue_playlist = function(playlist_obj) {
-    console.log('enqueued playlist:', util.inspect(playlist_obj));
+    var user = playlist_obj.user;
+
+    // Create a queue for the user if there's not one
+    if (!video_queues.has(user)) {
+      video_queues.set(user, Deque());
+    }
+
+    console.log('enqueue playlist:', util.inspect(playlist_obj));
     gapi.playlist(playlist_obj.id, function(video_list) {
+      var count = 0;
       for (video_obj of video_list) {
-        video_obj.user = playlist_obj.user;
-        jub.enqueue_video(video_obj);
+        video_obj.user = user;
+        gapi.video_specs(video_obj, function(obj) {
+          if (obj.title && obj.duration && user) {
+            //console.log(user, 'found info for video:', util.inspect(obj));
+          } else {
+            console.log('failed to find info for video', video_obj.id);
+          }
+          count += 1;
+        });
       }
+
+      // Periodically see if we're done fetching info for all the videos.
+      // Once we are, sort them and update the client's queue.
+      var check_back = function() {
+        if (count == video_list.length) {
+          console.log('yay! done fetching all video infos. sorting...');
+          // Sort by 'position', in place
+          video_list.sort(function(a, b) {
+            if (a.position <= b.position) {
+              return -1;
+            } else {
+              return 1;
+            }
+          });
+          for (video_obj of video_list) {
+            video_queues.get(user).unshift(video_obj);
+          }
+          console.log('sending client queue back to', user);
+          whisper(user, 'queue', jub.emittable_queue_for(user));
+        }
+        else {
+          setTimeout(check_back, 500);
+        }
+      }
+      check_back();
     });
   }
 
@@ -167,7 +212,6 @@ function JubDJ(config, gapi, chat) {
 
   this.emittable_queue_for = function(user) {
     if (video_queues.has(user)) {
-      console.log(video_queues.get(user).toArray());
       return video_queues.get(user).toArray();
     }
   }

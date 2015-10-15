@@ -6,12 +6,6 @@ function refresh_sizes(player_loaded) {
   var main_row_width = $(window).width();
   var player_pos = $('#player').offset();
 
-  //$('#jub-row-main').innerHeight(main_row_height);
-
-  // TODO remove after settling on a chat input location
-  //var space_under_chat = parseInt($('#chat-input').css('bottom'), 10) -
-  //                   ($(window).height() - $('#bottom-nav').position().top);
-
   // Chat messages
   var msgs_height = $('#bottom-nav').position().top - main_row_top - 10;
   $('#messages').innerHeight(msgs_height);
@@ -27,6 +21,7 @@ function refresh_sizes(player_loaded) {
 
   // Set queue height
   $('#video-queue').innerHeight(msgs_height - $('#queue-label').outerHeight());
+  $('#video-queue').trigger('redraw_items');
 
   // Justify jubbin list with player
   // TODO we wait till the player is loaded because the jump to justify
@@ -43,8 +38,14 @@ function refresh_sizes(player_loaded) {
   }
 }
 
+// Wait until some short period of time has passed after the user stops
+// resizing, because while they're doing it we get a flood of events
+var resize_timer;
 $( window ).resize(function() {
-  refresh_sizes();
+  if (resize_timer) {
+    window.clearTimeout(resize_timer)
+  }
+  resize_timer = window.setTimeout(refresh_sizes, 50);
 });
 
 $( document ).ready(function() {

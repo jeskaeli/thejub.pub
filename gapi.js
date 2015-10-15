@@ -27,7 +27,6 @@ function GAPI(config) {
         console.log('youtube search error', err);
       }
       if (resp && resp.items) {
-        console.log('returning results');
         callback(resp.items);
       }
     });
@@ -35,6 +34,7 @@ function GAPI(config) {
 
   // Adds title and duration to video object, and calls callback with it
   this.video_specs = function(obj, callback) {
+    //console.log('fetching video specs for', obj);
     if (obj.duration && obj.title) {
       callback(obj)
     } else {
@@ -58,8 +58,7 @@ function GAPI(config) {
   }
 
   // Pass in a playlist ID, get back a list of video objects
-  this.playlist = function(id, callback, page_token) {
-    console.log('youtube playlist');
+  this.playlist = function(id, callback, page_token, list_prefix) {
     var params = {
       part: 'id,snippet',
       maxResults: 50,      // this is the maximum allowed
@@ -67,6 +66,7 @@ function GAPI(config) {
       auth: api_key
     };
 
+    list_prefix = list_prefix || [];
     if (page_token) { params.pageToken = page_token }
 
     // Returns an array of result items with this structure:
@@ -84,22 +84,15 @@ function GAPI(config) {
             }
           });
 
-          // Sort by 'position', in place
-          video_list.sort(function(a, b) {
-            if (a.position <= b.position) {
-              return -1;
-            } else {
-              return 1;
-            }
-          });
-
           // If there's a next page, recursively call playlist() until there's
           // no next page. Each invocation calls the callback with a separate
           // chunk of items
           if (next_page_token) {
-            console.log('calling with next page', next_page_token);
-            youtube.playlist(id, callback, next_page_token);
-            callback(video_list);
+            console.log('fetching next page of playlist', next_page_token);
+            youtube.playlist(id, callback, next_page_token,
+                             list_prefix.concat(video_list));
+          } else {
+            callback(list_prefix.concat(video_list));
           }
         }
       }
