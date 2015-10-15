@@ -8,10 +8,7 @@ require('./logging')();
 function JubDJ(config, gapi, chat) {
   var gapi = gapi;
   var chat = chat;
-  var video_state = {
-    start_time: Date.now(),
-    duration: 0
-  }
+  var video_state = {};
   var video_queues = Map();      // username --> video queue
   var dj_sched = [];             // circular buffer of users signed up to DJ
   var current_users = new Set(); // users present in room
@@ -48,6 +45,8 @@ function JubDJ(config, gapi, chat) {
   // Periodically check the time so we can start the next video punctually.
   // When the time comes, pop the next DJ off the schedule and play his video.
   var rotate_videos = function() {
+    if (Object.keys(video_state).length == 0)
+      return;
     // It's time to rotate videos
     if (Date.now() > video_state.start_time + video_state.duration ||
         Object.keys(video_state).length == 0) {
