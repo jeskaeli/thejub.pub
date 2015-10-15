@@ -45,8 +45,6 @@ function JubDJ(config, gapi, chat) {
   // Periodically check the time so we can start the next video punctually.
   // When the time comes, pop the next DJ off the schedule and play his video.
   var rotate_videos = function() {
-    if (Object.keys(video_state).length == 0)
-      return;
     // It's time to rotate videos
     if (Date.now() > video_state.start_time + video_state.duration ||
         Object.keys(video_state).length == 0) {
@@ -75,7 +73,8 @@ function JubDJ(config, gapi, chat) {
       // Tell the clients about the updated state. Even if we didn't enqueue
       // a new video, we still need to send this out because someone might have
       // pressed 'skip'
-      broadcast('video state', jub.emittable_video_state());
+      if (video_state)
+        broadcast('video state', jub.emittable_video_state());
     }
   }
   setInterval(rotate_videos, 1000);
@@ -205,7 +204,7 @@ function JubDJ(config, gapi, chat) {
       server_time: Date.now(),
       duration: video_state.duration,
       user: video_state.user,
-      user_color: chat.color_for(video_state.user),
+      user_color: chat.color_for(video_state.user)
     }
   }
 
