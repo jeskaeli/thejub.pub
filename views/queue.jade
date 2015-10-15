@@ -1,16 +1,61 @@
 label(for='video-queue', id='queue-label') Queue:
-ul(id="video-queue", class="jub-list")
+div(id="video-queue", class='jub-list')
 script.
+
+  var my_queue = [];
+
+  function new_queue_li(video_obj, title_width) {
+    var li = $('<li>').addClass('queue-item');
+    var title_span = $('<span>').addClass('track');
+    var time_span = $('<span>').addClass('duration');
+    li.append(title_span);
+    li.append(time_span);
+
+    var tformat = (video.duration / 1000) >= 3600 ? '%k:%M:%S' : '%M:%S';
+    time = new Date(1970, 1, 1); // Unix epoch
+    time.setSeconds(video.duration / 1000);
+    time_span.text('(' + strftime(tformat, time) + ')');
+
+    title_span.text(video.title);
+
+    title_span.truncate({
+        width: title_width,
+        token: '...',
+        side: 'right',
+        multiline: false
+    });
+
+    return li;
+  }
+
+  // Redraw queue, taking into account the current width of the list
+  $('#video-queue').bind('redraw_items',function() {
+    // 65 = 55 + 4 + 3 + 3 = duration width - title margin-right - padding.
+    // TODO can't read this from the page because the elements aren't on the
+    // DOM yet. Can I just read the style sheet? Someone please tell me the
+    // right way to do this.
+    var pad = 65;
+    var title_width = $(this).width() - pad;
+
+    // if scrolling, add some more padding
+    if (this.scrollHeight > $(this).height()) {
+      title_width -= scrollbar_width(); // TODO seems to need a bit more
+    }
+
+    $(this).empty();
+    for (video of my_queue) {
+      var item = new_queue_li(video, title_width);
+      $(this).prepend(item);
+    }
+    $('#queue-label').text(get_username() + "'s queue (" + my_queue.length + ")");
+  });
+
   // Server tells us about video state changes
   socket.on('queue', function(queue) {
-    console.log('got queue state', queue);
+    var time;
     if (queue) {
-      console.log('queue', queue);
-      $('#video-queue').empty();
-      for (video of queue) {
-        var item = $('<li>').text(video['title']);
-        $('#video-queue').prepend(item);
-      }
+      my_queue = queue;
+      $('#video-queue').trigger('redraw_items');
     }
   });
 
