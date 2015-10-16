@@ -196,6 +196,15 @@ function JubDJ(config, gapi, chat) {
     console.log("Updated video state: %s", util.inspect(video_state));
   }
 
+  this.emittable_user_map = function() {
+    return current_users.map(function(user) {
+      return {
+        name: user,
+        color: chat.color_for(user)
+      }
+    });
+  }
+
   this.emittable_video_state = function() {
     return {
       id: video_state.id,
@@ -249,7 +258,7 @@ function JubDJ(config, gapi, chat) {
       console.log('force reload', user)
       socket.emit('force reload');
     }
-    callback(current_users.toArray());
+    callback(jub.emittable_user_map());
   }
 
   this.new_user_connection = function(user, callback) {

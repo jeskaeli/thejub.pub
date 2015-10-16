@@ -3,10 +3,6 @@
   border-radius: 0 !important; /* square corners */
 }
 
-a {
-  color: #0097AA !important;
-}
-
 html {
 }
 
@@ -108,11 +104,15 @@ body {
   text-align: right;
 }
 
+/* navbars */
+#bottom-nav ul.navbar-nav>li>a {
+  color: #0097AA;
+}
+
 /* top navbar */
 .jub-nav-top-item {
   top: 5px;
 }
-
 .navbar-fixed-top {
   height: 60px;
 }
@@ -120,10 +120,6 @@ body {
 /* inputs in nav bars */
 .jub-nav-input {
   background: #161616;
-  /* this will be dynamically sized; this is just a ballpark */
- /* width: 100%;
-  position: fixed;
-  bottom: 75px; */
 }
 
 #messages {
@@ -152,15 +148,33 @@ body {
   float: right;
 }
 
-
-/* current users */
-#jubbin-list-div {
-  margin-top: 20px;
+/* nav tabs */
+.nav-tabs {
+  border-bottom: 0px solid #111;
+}
+.nav-tabs>li>a {
+  border: 0px solid #111;
+  color: #AAAABB;
+}
+.nav-tabs>li.active>a,
+.nav-tabs>li.active>a:focus,
+.nav-tabs>li.active>a:hover,
+.nav-tabs>li.active>a:active {
+  background-color: #3F2C52;
+  border: 0px solid #111;
+  color: #FFF;
+}
+.nav-tabs>li>a:hover,
+.nav-tabs>li>a:focus {
+  background-color: #2C1E39;
+  color: #FFF;
 }
 
+/* current users */
 #jubbin-list {
   margin: 0;
   padding: 0;
+  font-weight: bold;
   list-style-type: none;
   max-height: 200px;
   overflow-y:auto;

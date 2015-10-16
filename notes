@@ -13,3 +13,6 @@ Using google's Youtube APIs from the client
 Architecture
   Stop using JubDJ as the conduit for inter-module communication; instead just
   inject dependencies among modules as needed
+
+Smooth slide-out menu
+http://apeatling.com/2014/building-smooth-sliding-mobile-menu/

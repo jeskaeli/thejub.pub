@@ -1,17 +1,53 @@
-ul(id="messages", class="jub-list")
+ul(id="chat-navtabs", class="nav nav-tabs")
+  li(id="chat-navtab-li", role="presentation", class="active")
+    a(id="#chat-navtab-a", href="#chat-tab") Chat
+  li(role="presentation")
+    a(id="#jubbin-list-navtab", href="#jubbin-list-tab") Who's jubbin'
+div(id="chat-tab-content", class="tab-content")
+  div(class="tab-pane active" id="chat-tab")
+    ul(id="messages", class="jub-list")
+  div(class="tab-pane active" id="jubbin-list-tab")
+    ul(id="jubbin-list", class="jub-list")
 
 script.
 
   var scrolled_up = false;
+  var current_users = {};
+
+  $('#chat-navtabs a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+
+    // Depending on which tab we're opening, update certain UI elements
+    if (e.currentTarget.id == '#jubbin-list-navtab') {
+      $('#jubbin-list').empty();
+      for (user of current_users) {
+        $('#jubbin-list').append(
+          $('<li>').text(user.name).css('color', user.color)
+        );
+      }
+    } else {
+      $('#messages').trigger('update_scroll');
+    }
+  })
+
+  // Message from server saying who's connected
+  socket.on('current users', function(users) {
+    current_users = users;
+  });
 
   // Scroll chat to bottom if needed
-  $('#messages').bind('update_scroll',function() {
+  $('#messages').bind('update_scroll', function() {
+    console.log('update_scroll', scrolled_up);
     if (!scrolled_up) {
+      console.log(this.scrollTop, this.scrollHeight);
       this.scrollTop = this.scrollHeight;
+      console.log(this.scrollTop, this.scrollHeight);
     }
   });
 
   // Called whenever chat box is scrolled, including on window resizes
+  // TODO put this on the same, slower timing as other resize functions
   $('#messages').scroll(function() {
     var elem = $( this );
     var max_height = parseInt(elem.css('max-height'), 10);
@@ -118,7 +154,6 @@ script.
         list.find('li').last().append(document.createTextNode(line));
       }
     }
-    var new_y = list.height();
 
     $('#messages').trigger('update_scroll');
   });
@@ -134,4 +169,5 @@ script.
         text: '/color ' + color
       })
     }
+    $('#chat-navtab-a').trigger('click');
   });
