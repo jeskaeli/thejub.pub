@@ -7,13 +7,13 @@ function refresh_sizes(player_loaded) {
   var player_pos = $('#player').offset();
 
   // Chat messages
-  var msgs_height = $('#bottom-nav').position().top - main_row_top - 10;
+  var chat_tabs_bottom = $('#chat-navtabs').offset().top + $('#chat-navtabs').height();
+  var msgs_height = $('#bottom-nav').position().top - chat_tabs_bottom - 10;
   $('#messages').innerHeight(msgs_height);
   $('#messages').trigger('update_scroll');
 
   // Chat input width
-  // TODO can't get this to work with style sheets alone
-  $('#chat-input').outerWidth($('#messages').width());
+  $('#chat-input').outerWidth($('#chat-tab-content').width());
   $('#chat-input').css({
     'margin-right': parseInt($('#jub-col-chat').css('padding-right'), 10) +
                     parseInt($('#jub-container').css('padding-right'), 10)
