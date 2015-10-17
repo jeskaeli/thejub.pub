@@ -5,7 +5,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var config = require('./config') || {
-  url_path: '/foo',
+  private_route: '/foo',
   moved_message: 'Ask around for the new URL!'
 };
 
@@ -31,9 +31,9 @@ app.use(express.static(
 config.url_path = config.url_path || '/foo'
 
 /* GET home page. */
-app.get(config.url_path, function(req, res, next) {
-  if (req.path == config.url_path) {
-    res.render('index', { title: 'jub.dj' }, function(err, html) {
+app.get(config.private_route, function(req, res, next) {
+  if (req.path == config.private_route) {
+    res.render('index', { title: config.title }, function(err, html) {
       if (err) {
         console.error(err.message);
         next.send(html);
