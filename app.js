@@ -5,8 +5,6 @@ var favicon = require('serve-favicon');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var routes = require('./routes/index');
-
 var config = require('./config');
 var app = express();
 require('./logging')(app);
@@ -29,7 +27,32 @@ app.use(express.static(
   }
 ));
 
-app.use('/', routes);
+config.url_path = config.url_path || '/foo'
+
+/* GET home page. */
+app.get(config.url_path, function(req, res, next) {
+  if (req.path == config.url_path) {
+    res.render('index', { title: 'jub.dj' }, function(err, html) {
+      if (err) {
+        console.error(err.message);
+        next.send(html);
+      } else {
+        res.send(html);
+      }
+    });
+  }
+});
+app.get('/', function(req, res, next) {
+  res.render('moved', function(err, html) {
+    if (err) {
+      console.error(err.message);
+      next.send(html);
+    } else {
+      res.send(html);
+    }
+  });
+});
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
