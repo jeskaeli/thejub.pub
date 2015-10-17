@@ -1,22 +1,23 @@
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
-//var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var config = require('./config');
+var config = require('./config') || {
+  url_path: '/foo',
+  moved_message: 'Ask around for the new URL!'
+};
+
 var app = express();
-require('./logging')(app);
+require('./lib/logging')(app);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.locals.pretty = true;
 
-// uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-//app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -43,7 +44,7 @@ app.get(config.url_path, function(req, res, next) {
   }
 });
 app.get('/', function(req, res, next) {
-  res.render('moved', function(err, html) {
+  res.render('moved', { message: config.moved_message }, function(err, html) {
     if (err) {
       console.error(err.message);
       next.send(html);
@@ -85,13 +86,13 @@ app.use(function(err, req, res, next) {
   });
 });
 
-app.auth = require('./auth')(config);
-app.models = require('./models')(config, app.auth);
-app.db = require('./db')(config, app.models);
-app.gapi = require('./gapi')(config); // doesn't need to be an app member
-app.bot = require('./bot')(config, app.gapi);
-app.chat = require('./chat')(config, app.bot);
-app.jub = require('./jub_dj')(config, app.gapi, app.chat);
+app.auth = require('./lib/auth')(config);
+app.models = require('./lib/models')(config, app.auth);
+app.db = require('./lib/db')(config, app.models);
+app.gapi = require('./lib/gapi')(config); // doesn't need to be an app member
+app.bot = require('./lib/bot')(config, app.gapi);
+app.chat = require('./lib/chat')(config, app.bot);
+app.jub = require('./lib/jub_dj')(config, app.gapi, app.chat);
 app.config = config;
 
 // Note: in ./bin/www -> socket-routing.js, the jub receives a callback
@@ -105,7 +106,5 @@ var token = app.auth.gen_token(function(token) {
   app.db.store_auth('123456abcdef', token, 1);
 });
 /* scratch over */
-
-
 
 module.exports = app;
