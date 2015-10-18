@@ -30,9 +30,13 @@ app.use(express.static(
 
 config.url_path = config.url_path || '/foo'
 
-/* GET home page. */
+/* Routes */
+
+// Main page
+// If the user has an auth token, or the query param 'no_auth' is set to 'true',
+// let them pass. Otherwise, take them to the YouTube access request form.
 app.get(config.private_route, function(req, res, next) {
-  if (req.path == config.private_route) {
+  if (req.cookies.yt_oauth_token || req.query.no_auth === 'true') {
     res.render('index', { title: config.title }, function(err, html) {
       if (err) {
         console.error(err.message);
@@ -41,8 +45,47 @@ app.get(config.private_route, function(req, res, next) {
         res.send(html);
       }
     });
+  } else {
+    console.error(req);
+    res.redirect(config.oauth_request_uri);
   }
 });
+
+// The user is directed here after receiving a YouTube API token
+app.get('/oauth2callback', function(req, res, next) {
+  params = {
+    title: config.title,
+    ok_route: config.private_route,
+    err_route: '/no_auth'
+  }
+  res.render('oauth2callback', params, function(err, html) {
+    if (err) {
+      console.error(err.message);
+      next.send(html);
+    } else {
+      res.send(html);
+    }
+  });
+});
+
+// Tiny page confirming the user's denial of YouTube access
+app.get('/no_auth', function(req, res, next) {
+  params = {
+    title: config.title,
+    ok_route: config.private_route + '?no_auth=true',
+    back_route: config.private_route
+  }
+  res.render('no_auth', params, function(err, html) {
+    if (err) {
+      console.error(err.message);
+      next.send(html);
+    } else {
+      res.send(html);
+    }
+  });
+});
+
+// Minimal message at '/' route
 app.get('/', function(req, res, next) {
   res.render('moved', { message: config.moved_message }, function(err, html) {
     if (err) {
@@ -55,7 +98,7 @@ app.get('/', function(req, res, next) {
 });
 
 
-// catch 404 and forward to error handler
+// Catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;

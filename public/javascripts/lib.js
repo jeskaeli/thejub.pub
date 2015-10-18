@@ -15,7 +15,10 @@ function inspect(o, i) {
 function get_cookie(name) {
   var value = "; " + document.cookie;
   var parts = value.split("; " + name + "=");
-  if (parts.length == 2) return parts.pop().split(";").shift();
+  if (parts.length == 2)
+    return parts.pop().split(";").shift();
+  else
+    return null;
 }
 
 // monkey-patch String with #starts_with

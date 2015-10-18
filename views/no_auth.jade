@@ -1,0 +1,39 @@
+include ./head.jade
+
+
+div(class='row')
+  div(class='col-md-3')
+  div(class='col-md-6')
+    h3(id='oauth_message', style='text-align:center') You've chosen to deny access to YouTube. You will not be able to play videos... you'll just be a jub.
+  div(class='col-md-3')
+br
+br
+div(class='row')
+  div(class='col-md-5')
+  div(class='col-md-1')
+    div(class='input-group input-group-md')
+      span(class='input-group-btn')
+        button(class='btn btn-default', type='button', id='no_auth_ok',
+               data-toggle='tooltip', data-placement='top',
+               title='Proceed') FINE!
+  div(class='col-md-1')
+    div(class='input-group input-group-md')
+      span(class='input-group-btn')
+        button(class='btn btn-default', type='button', id='no_auth_back',
+               data-toggle='tooltip', data-placement='top',
+               title='Back') Oh. On second thought...
+  div(class='col-md-5')
+
+
+script.
+
+  $('#no_auth_ok').on('click', function(e) {
+    e.preventDefault();
+    window.location.replace("#{ok_route}");
+  });
+
+  $('#no_auth_back').on('click', function(e) {
+    e.preventDefault();
+    window.location.replace("#{back_route}");
+  });
+
