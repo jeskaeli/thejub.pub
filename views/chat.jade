@@ -119,7 +119,7 @@ script.
     if (msg_obj.text == undefined) {
       return;
     }
-    msg_obj.user = msg_obj.user || 'someone';
+    msg_obj.user = msg_obj.user || '???';
 
     // Detect mentions and notify in title bar
     if (msg_obj.text.indexOf(get_username()) >= 0) {
