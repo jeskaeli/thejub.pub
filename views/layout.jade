@@ -2,8 +2,6 @@ doctype html
 html(lang="en")
   head
     include ./head.jade
-    script.
-      var socket = io();
   body
     div(class='container-fluid', id='jub-container')
       include ./top.jade
@@ -22,6 +20,10 @@ html(lang="en")
     // Outside of the container
     include ./bottom.jade
 
-// Javascript-only files
+// Load some JavaScript files
 script(src='/javascripts/resizing.js')
+script(src='/javascripts/gapi.js')
 script(src='/javascripts/global.js')
+
+// Loaded here because the OnLoadCallback needs to be defined first
+script(src="https://apis.google.com/js/client.js?onload=OnLoadCallback")

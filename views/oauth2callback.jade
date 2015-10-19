@@ -1,4 +1,10 @@
 include ./head.jade
+
+script(src='/javascripts/gapi.js')
+
+// Loaded second because OnLoadCallback needs to be defined first
+script(src="https://apis.google.com/js/client.js?onload=OnLoadCallback")
+
 h4(id='oauth_message', style='text-align:center') Redirecting...
 
 script.
@@ -15,8 +21,16 @@ script.
   var hash = window.location.hash;
   if (hash.indexOf('access_token') > -1) {
     var token = window.location.hash.split('access_token=')[1].split('&')[0];
-    store_token(token);
-    window.location.replace("#{ok_route}");
+    $.get('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=' + token,
+      function(resp) {
+        console.log(resp);
+      });
+
+    /*store_token(token);
+    socket.emit('youtube token', token, function(resp) {
+      console.log(resp);
+    });
+    window.location.replace("#{ok_route}");*/
   } else {
     window.location.replace("#{err_route}");
   }

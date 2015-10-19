@@ -60,4 +60,4 @@ function scrollbar_width() {
   return this.value;
 };
 
-
+var socket = io();
