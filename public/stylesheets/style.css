@@ -126,6 +126,16 @@ body {
   overflow-y:auto;
 }
 
+/* current users */
+#jubbin-list {
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+  list-style-type: none;
+  max-height: 400px;
+  overflow-y:auto;
+}
+
 #video-queue {
   overflow-y:auto;
 }
@@ -168,16 +178,6 @@ body {
 .nav-tabs>li>a:focus {
   background-color: #2C1E39;
   color: #FFF;
-}
-
-/* current users */
-#jubbin-list {
-  margin: 0;
-  padding: 0;
-  font-weight: bold;
-  list-style-type: none;
-  max-height: 200px;
-  overflow-y:auto;
 }
 
 /*

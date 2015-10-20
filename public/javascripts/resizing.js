@@ -12,6 +12,9 @@ function refresh_sizes(player_loaded) {
   $('#messages').innerHeight(msgs_height);
   $('#messages').trigger('update_scroll');
 
+  // Match current users height to messages height
+  $('#jubbin-list').innerHeight(msgs_height);
+
   // Chat input width
   $('#chat-input').outerWidth($('#chat-tab-content').width());
   $('#chat-input').css({
@@ -22,20 +25,6 @@ function refresh_sizes(player_loaded) {
   // Set queue height
   $('#video-queue').innerHeight(msgs_height - $('#queue-label').outerHeight());
   $('#video-queue').trigger('redraw_items');
-
-  // Justify jubbin list with player
-  // TODO we wait till the player is loaded because the jump to justify
-  // against it is noticeable (the player takes a second to load). Once
-  // we find a final location for this list, this can probably go away.
-  if (!this.player_loaded) {
-    $('#jubbin-list-div').hide();
-  } else {
-    $('#jubbin-list-div').show();
-    $('#jubbin-list-div').css({
-      'position': 'fixed',
-      'left': '' + player_pos.left + 'px',
-    });
-  }
 }
 
 // Wait until some short period of time has passed after the user stops
