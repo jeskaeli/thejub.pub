@@ -5,21 +5,19 @@ var OnGAPILoad = function() {
     console.log('setting key', key);
     gapi_key = key;
     gapi.client.setApiKey(key);
+    gapi.client.load('youtube', 'v3').then(function() {
+      gapi_ready = true;
+    });
   });
-  gapi_ready = true;
 }
 
 var youtube_video_search = function(query, callback) {
-  gapi.client.request({
-    'path': 'youtube/v3/search',
-    'params': {
+  gapi.client.youtube.search.list({
       part: 'snippet',
       maxResults: 50,
       order: 'viewCount',
       q: query,
-      type: 'video',
-      auth: gapi_key
-    }
+      type: 'video'
   }).then(function(resp) {
     callback(resp.result.items);
   });
@@ -36,13 +34,9 @@ var youtube_video_specs = function(obj, callback) {
 
     // Returns an array of result items with this structure:
     //   https://developers.google.com/youtube/v3/docs/search/list#response
-    gapi.client.request({
-      'path': 'youtube/v3/videos',
-      'params': {
-        part: 'snippet,contentDetails',
-        id: [obj.id],
-        auth: gapi_key
-      }
+    gapi.client.youtube.videos.list({
+      part: 'snippet,contentDetails',
+      id: [obj.id]
     }).then(function(resp) {
       if (resp.result && resp.result.items && resp.result.items.length > 0) {
         var duration = resp.result.items[0].contentDetails.duration;

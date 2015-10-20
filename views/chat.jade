@@ -38,11 +38,8 @@ script.
 
   // Scroll chat to bottom if needed
   $('#messages').bind('update_scroll', function() {
-    console.log('update_scroll', scrolled_up);
     if (!scrolled_up) {
-      console.log(this.scrollTop, this.scrollHeight);
       this.scrollTop = this.scrollHeight;
-      console.log(this.scrollTop, this.scrollHeight);
     }
   });
 
@@ -140,7 +137,6 @@ script.
       save_color(msg_obj.color);
     }
 
-    console.log('received chat', msg_obj);
     var list = $('#messages');
     if(msg_obj.user != this.last_user || msg_obj.is_bot ||
        msg_obj.emote || this.last_emote) {
