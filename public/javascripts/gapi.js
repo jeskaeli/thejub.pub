@@ -1,8 +1,11 @@
-var gapi_key = 'AIzaSyAC05PGbv_Ze4jhKRUAq4QVHc_of-CCMCc';
 var gapi_ready = false;
 
 var OnGAPILoad = function() {
-  gapi.client.setApiKey(gapi_key);
+  socket.emit('gapi key', function(key) {
+    console.log('setting key', key);
+    gapi_key = key;
+    gapi.client.setApiKey(key);
+  });
   gapi_ready = true;
 }
 
