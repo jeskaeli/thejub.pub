@@ -6,14 +6,16 @@ function refresh_sizes(player_loaded) {
   var main_row_width = $(window).width();
   var player_pos = $('#player').offset();
 
-  // Chat messages
+  // Chat messages and "who's jubbin" list
   var chat_tabs_bottom = $('#chat-navtabs').offset().top + $('#chat-navtabs').height();
   var msgs_height = $('#bottom-nav').position().top - chat_tabs_bottom - 10;
+
   $('#messages').innerHeight(msgs_height);
   $('#messages').trigger('update_scroll');
 
-  // Match current users height to messages height
-  $('#jubbin-list').innerHeight(msgs_height);
+  if ($('#jubbin-list-tab').hasClass('active')) {
+    $('#jubbin-list').innerHeight(msgs_height);
+  }
 
   // Chat input width
   $('#chat-input').outerWidth($('#chat-tab-content').width());
