@@ -11,7 +11,7 @@ chat + shared video
 $ cd jub.dj
 $ npm install --loglevel verbose
 ````
-4. Start the server:
+4. The server can be started with the following command (though it won't work well without a file called config.js, which is not under source control).
 ```
 $ npm start
 ```
