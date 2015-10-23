@@ -1,4 +1,4 @@
-# jub.dj
+# thejub.pub
 chat + shared video
 
 ## Starting a local server
@@ -19,6 +19,3 @@ Then visit `http://localhost:3000/` in your browser. You can specify a different
 ```
 $ PORT=1234 npm start
 ```
-
-## Testing
-TODO
