@@ -6,9 +6,8 @@ chat + shared video
 2. Install node.js + npm:
  * https://nodesource.com/blog/nodejs-v012-iojs-and-the-nodesource-linux-repositories
  * http://www.sitepoint.com/beginners-guide-node-package-manager/
-3. Install the dependencies:
-```   
-$ cd jub.dj
+3. Install the dependencies. From the project directory:
+```
 $ npm install --loglevel verbose
 ```
 The server can be started with the following command (though it won't work well without a file called config.js, which is not under source control):
