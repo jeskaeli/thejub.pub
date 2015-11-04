@@ -44,6 +44,18 @@ app.get(config.private_route, function(req, res, next) {
   });
 });
 
+// dummy path for testing path forwarding
+app.get('/test_path', function(req, res, next) {
+  res.render('test_path', {}, function(err, html) {
+    if (err) {
+      console.error(err.message);
+      next.send(html);
+    } else {
+      res.send(html);
+    }
+  });
+});
+
 // Minimal message at '/' route
 app.get('/', function(req, res, next) {
   res.render('moved', { message: config.moved_message }, function(err, html) {
