@@ -1,10 +1,11 @@
 script.
 
   var store_username = function(username) {
-    var expiration_date = new Date();
-    expiration_date.setFullYear(expiration_date.getFullYear() + 1);
-    document.cookie = 'username=' + username + "; " +
-                      'expires=' + expiration_date.toGMTString();
+    set_cookie('username', username);
+  }
+
+  var store_username_color = function(color) {
+    set_cookie('username_color', color);
   }
 
   // Any desired effects of the user changing username should go in here
@@ -16,6 +17,10 @@ script.
 
   var get_username = function() {
     return get_cookie('username');
+  }
+
+  var get_username_color = function() {
+    return get_cookie('username_color');
   }
 
   // Username input box
@@ -30,9 +35,14 @@ script.
   // Document is loaded so cookies are probably ready. If the username cookie
   // is empty, the server will assign us a name, and we'll store it.
   $( document ).ready(function() {
-    socket.emit('user loaded', get_username(), function(assigned) {
-      store_username(assigned);
-      console.log('stored username', username);
+    var user_info = {
+      name: get_username(),
+      color: get_username_color()
+    }
+    socket.emit('user loaded', user_info, function(assigned) {
+      store_username(assigned.name);
+      store_username_color(assigned.color);
+      console.log('stored user info', assigned);
     });
   });
 

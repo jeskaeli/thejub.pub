@@ -21,6 +21,13 @@ function get_cookie(name) {
     return null;
 }
 
+function set_cookie(name, value) {
+  var expiration_date = new Date();
+  expiration_date.setFullYear(expiration_date.getFullYear() + 1);
+  document.cookie = name + '=' + value + '; ' +
+                    'expires=' + expiration_date.toGMTString();
+}
+
 // monkey-patch String with #starts_with
 // TODO don't duplicate this with the server-side version
 if ( typeof String.prototype.starts_with != 'function' ) {

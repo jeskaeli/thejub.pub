@@ -51,13 +51,6 @@ script.
     scrolled_up = (Math.abs(this.scrollHeight - this.scrollTop - elem.height()) > 10);
   });
 
-  var save_color = function(color) {
-    var expiration_date = new Date();
-    expiration_date.setFullYear(expiration_date.getFullYear() + 1);
-    document.cookie = 'username_color=' + color + '; ' +
-                      'expires=' + expiration_date.toGMTString();
-  }
-
   var new_chat_li = function(msg_obj) {
     var li = $('<li>');
 
@@ -129,14 +122,6 @@ script.
       }
     }
 
-    // Though the client can request a color, the server is the authority on
-    // color; save our assigned color as a cookie so that we can remind the
-    // server of it next time.
-    // TODO this should absolutely be saved on the server
-    if (msg_obj.color && msg_obj.user == get_username()) {
-      save_color(msg_obj.color);
-    }
-
     var list = $('#messages');
     if(msg_obj.user != this.last_user || msg_obj.is_bot ||
        msg_obj.emote || this.last_emote) {
@@ -152,18 +137,4 @@ script.
     }
 
     $('#messages').trigger('update_scroll');
-  });
-
-  // Load the username color cookie and send a message to the server's chat
-  // module indicating the color choice.
-  $( document ).ready(function() {
-    var color = get_cookie('username_color');
-    var username = get_cookie('username');
-    if (color && username) {
-      socket.emit('chat message', {
-        user: username,
-        text: '/color ' + color
-      })
-    }
-    $('#chat-navtab-a').trigger('click');
   });
