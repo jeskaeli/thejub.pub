@@ -3,8 +3,8 @@
   border-radius: 0 !important; /* square corners */
 }
 
-html {
-}
+.left { float: left ; }
+.right { float: right ; }
 
 #jub-container {
   width: auto;
@@ -70,31 +70,44 @@ body {
 }
 .jub-list li:nth-child(odd) { background: #1C1C1C; }
 
-/* player */
-#player-panel {
+/* player and queue panel commonalities */
+#player-panel,
+#queue-panel {
   border: 0;
-  width: 484px;
+  background-color: #111;
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 0px;
 }
+#player-panel .panel-body,
+#queue-panel  .panel-body {
+  border: 0;
+  background-color: #161616;
+  padding: 0 0 0 0;
+}
+#player-panel .panel-footer,
+#queue-panel  .panel-footer {
+  font-size: 12px;
+}
+#player-panel th,
+#queue-panel  th {
+  padding: 5px 5px 5px 5px;
+}
+
+/* player panel */
 #player-panel * {
   border: 0;
   background-color: #111;
-  color: #DDDDEE;
+}
+#player-panel {
+  width: 484px; /* width of the player */
 }
 #player-panel .panel-body {
-  padding: 0 0 0 0;
   height: 290px;
 }
-#player-panel .panel-title {
+#current-track {
+  color: #DDDDEE;
   font-size: 13px;
-}
-#player-panel .panel-footer {
-  font-size: 12px;
-}
-#player-panel th {
-  padding: 5px 5px 5px 5px;
 }
 #current-track {
   font-weight: normal;
@@ -102,6 +115,30 @@ body {
 #time-left {
   min-width: 55px;
   text-align: right;
+}
+
+/* video queue */
+#video-queue {
+  color: #BBBBCC; /* slightly darker text for queue items */
+}
+#queue-banner {
+  background: #111;
+}
+#queue-label {
+  color: #DDDDEE;
+  font-size: 13px;
+  line-height: 2.4;
+}
+/* TODO create class for orange buttons */
+#queue-panel .btn {
+  background-color: #732D0A ;
+  border-color: #732D0A ;
+  float: right ;
+}
+#queue-panel .btn:hover {
+  background-color: #e6e6e6;
+  border-color: #adadad;
+  color: #333;
 }
 
 /* navbars */

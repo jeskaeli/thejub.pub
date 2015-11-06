@@ -25,12 +25,9 @@ var youtube_video_search = function(query, callback) {
 
 // Adds title and duration to video object, and calls callback with it
 var youtube_video_specs = function(obj, callback) {
-  console.log('fetching video specs for', obj);
   if (obj.duration && obj.title) {
     callback(obj)
   } else {
-    var params = {
-    };
 
     // Returns an array of result items with this structure:
     //   https://developers.google.com/youtube/v3/docs/search/list#response
@@ -62,13 +59,13 @@ var youtube_playlist = function(id, callback, page_token, list_prefix) {
   if (page_token) { params.pageToken = page_token }
 
   gapi.client.youtube.playlistItems.list(params).then(function(resp) {
-    console.log(resp);
-    var next_page_token = resp.nextPageToken;
+    var next_page_token = resp.result.nextPageToken;
     if (resp.result && resp.result.items && resp.result.items.length > 0) {
       var video_list = resp.result.items.map(function(item) {
-        return { title: item.snippet.title,
+        return {
+          title: item.snippet.title,
           id: item.snippet.resourceId.videoId,
-        position: item.snippet.position
+          position: item.snippet.position
         }
       });
 

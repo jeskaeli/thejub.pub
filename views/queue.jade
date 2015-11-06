@@ -1,5 +1,18 @@
-label(for='video-queue', id='queue-label') Queue:
-div(id="video-queue", class='jub-list')
+div(class='panel panel-default', id='queue-panel')
+  table(class='table', id='queue-banner')
+    tbody
+      tr
+        th(id='queue-label') Queue:
+        th(class='right', id='queue-buttons')
+          div(class='input-group input-group-md')
+            button(class='btn btn-default', type='button', id='shuffle',
+                   data-toggle='tooltip', data-placement='top',
+                   title='Shuffle')
+              span(id='shuffle-icon', class='glyphicon glyphicon-random')
+
+  div(class='panel-body')
+    div(id='video-queue', class='jub-list')
+
 script.
 
   var my_queue = [];
@@ -50,13 +63,23 @@ script.
     $('#queue-label').text(get_username() + "'s queue (" + my_queue.length + ")");
   });
 
-  // Server tells us about video state changes
-  socket.on('queue', function(queue) {
-    var time;
+  function update_queue(queue) {
     if (queue) {
       my_queue = queue;
       $('#video-queue').trigger('redraw_items');
     }
+  };
+
+  // Server tells us about video state changes
+  socket.on('queue', function(queue) {
+    update_queue(queue)
+  });
+
+  // Shuffle
+  $('#shuffle').on('click', function(e) {
+    console.log('requesting shuffle');
+    socket.emit('shuffle', get_username(), update_queue);
+    return false;
   });
 
   // Document is loaded so we can populate our video queue.

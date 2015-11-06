@@ -25,6 +25,7 @@ function refresh_sizes(player_loaded) {
   })
 
   // Set queue height
+  $('#queue-panel').innerHeight(msgs_height - $('#queue-label').outerHeight());
   $('#video-queue').innerHeight(msgs_height - $('#queue-label').outerHeight());
   $('#video-queue').trigger('redraw_items');
 }
