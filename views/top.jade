@@ -156,14 +156,22 @@ script.
     if (id.length > 11) {
       var count = 0;
       var videos_obj = { user: user }
+      var done = false;
       $('#omnibox').val('');
+      var wait_for_playlist = function() {
+        if (!done) {
+          $('#omnibox').val($('#omnibox').val() + '.');
+          setTimeout(wait_for_playlist, 300);
+        }
+      }
+      setTimeout(wait_for_playlist, 300);
       youtube_playlist(id, function(video_list) {
-        //console.log(video_list);
+        done = true;
         for (video_obj of video_list) {
           video_obj.user = user;
           youtube_video_specs(video_obj, function(obj) {
             if (obj.title && obj.duration && user) {
-            } else {
+              } else {
               console.log('failed to find info for video', video_obj.id);
             }
             count += 1;
@@ -172,7 +180,7 @@ script.
 
         // Periodically see if we're done fetching info for all the videos.
         // Once we are, sort them and update the client's queue.
-        var check_back = function() {
+        var wait_for_specs = function() {
           if (count == video_list.length) {
             console.log('yay! done fetching all video infos. sorting...');
 
@@ -185,13 +193,14 @@ script.
             socket.emit('videos enqueue', videos_obj);
             $('#omnibox').val('');
           } else {
-            $('#omnibox').val($('#omnibox').val() + '...');
-            setTimeout(check_back, 500);
+            $('#omnibox').val($('#omnibox').val() + '.');
+            setTimeout(wait_for_specs, 300);
           }
         }
-        check_back();
+        wait_for_specs();
       });
-    } else { // Not a playlist; it's a video. Submit it.
+    } else {
+      // Not a playlist; it's a video. Submit it.
       var video_obj = {
         user: get_cookie('username'),
         id: id
@@ -202,7 +211,7 @@ script.
           socket.emit(channel, result_obj);
           $('#omnibox').val('');
         } else {
-          console.log('failed to find info for video', result_ob.id);
+          console.log('failed to find info for video', result_obj.id);
         }
       });
     }

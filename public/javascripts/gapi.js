@@ -41,6 +41,8 @@ var youtube_video_specs = function(obj, callback) {
         obj.title = resp.result.items[0].snippet.title;
       }
       callback(obj);
+    }, function(reason) {
+      callback({});
     });
   }
 }
@@ -79,5 +81,7 @@ var youtube_playlist = function(id, callback, page_token, list_prefix) {
         callback(list_prefix.concat(video_list));
       }
     }
+  }, function(reason) {
+    callback([]);
   });
 }
