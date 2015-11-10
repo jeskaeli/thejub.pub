@@ -28,21 +28,25 @@ app.use(express.static(
   }
 ));
 
-config.url_path = config.url_path || '/foo'
+config.private_route = config.private_route || '/foo';
 
 /* Routes */
 
 // Main page
-app.get(config.private_route, function(req, res, next) {
-  res.render('index', { title: config.title }, function(err, html) {
-    if (err) {
-      console.error(err.message);
-      next.send(html);
-    } else {
-      res.send(html);
-    }
+(function() {
+  var slash = config.private_route[0] !== '/' ? '/' : '';
+  app.get(slash + config.private_route, function(req, res, next) {
+    res.render('index', { title: config.title }, function(err, html) {
+      if (err) {
+        console.error(err.message);
+        next.send(html);
+      } else {
+        res.send(html);
+      }
+    });
   });
-});
+})();
+
 
 // dummy path for testing path forwarding
 app.get('/test_path', function(req, res, next) {
