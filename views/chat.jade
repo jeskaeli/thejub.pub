@@ -13,6 +13,7 @@ script.
 
   var scrolled_up = false;
   var current_users = {};
+  var urlRegex = /(http\:\/\/|https\:\/\/)?([a-z0-9][a-z0-9\-]*\.)+[a-z0-9][a-z0-9\-]*/i;
 
   $('#chat-navtabs a').click(function (e) {
     e.preventDefault();
@@ -50,7 +51,18 @@ script.
     var max_height = parseInt(elem.css('max-height'), 10);
     scrolled_up = (Math.abs(this.scrollHeight - this.scrollTop - elem.height()) > 10);
   });
-
+  var makeLink = function(line) {
+    var a = $( '<a>' ).on( 'click', function( event ) {
+      event.preventDefault();
+      var adjusted = line;
+      if(line.indexOf('http') !== 0) {
+        adjusted = 'http://' + line;
+      }
+      window.open( adjusted, '_blank' );
+    } );
+    a.append(line);
+    return a;
+  }
   var new_chat_li = function(msg_obj) {
     var li = $('<li>');
 
@@ -95,8 +107,14 @@ script.
       // Add each line of the message, with <br>'s in between
       for (line of msg_obj.text.split('\n')) {
         li.append('<br>');
-        li.append(document.createTextNode(line));
+        var isLink = (urlRegex).test(line);
+        if(isLink) {
+          li.append(makeLink(line));
+        } else {
+          li.append( document.createTextNode( line ) );
+        }
       }
+
     }
     return li;
   }
@@ -132,7 +150,12 @@ script.
     } else {
       for (line of msg_obj.text.split('\n')) {
         list.find('li').last().append('<br>');
-        list.find('li').last().append(document.createTextNode(line));
+        var isLink = (urlRegex).test(line);
+        if(isLink) {
+          list.find( 'li' ).last().append(makeLink(line));
+        } else {
+          list.find( 'li' ).last().append( document.createTextNode( line ) );
+        }
       }
     }
 
