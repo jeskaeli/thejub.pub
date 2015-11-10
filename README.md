@@ -10,7 +10,14 @@ chat + shared video
 ```
 $ npm install --loglevel verbose
 ```
-The server can be started with the following command (though it won't work well without a file called config.js, which is not under source control):
+Copy the test `config.js` under `test/` to the root level
+```
+$ cp test/config.js config.js
+```
+Get YouTube developer keys (you'll have to get one for server and one for browser) and replace `google_api_server_key` and
+`google_api_browser_key` with the ones provided by Google.
+
+The server can be started with the following command:
 ```
 $ npm start
 ```
