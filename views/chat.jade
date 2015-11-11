@@ -120,7 +120,9 @@ script.
           li.append( document.createTextNode( line ) );
         }
       }
-
+      if(msg_obj.hasOwnProperty( 'customPanelColor' )) {
+        li.css('background', msg_obj.customPanelColor);
+      }
     }
     return li;
   }
@@ -147,24 +149,25 @@ script.
     }
 
     var list = $('#messages');
+    var chat_li;
     if(msg_obj.user != this.last_user || msg_obj.is_bot ||
        msg_obj.emote || this.last_emote) {
       this.last_emote = msg_obj.emote;
       this.last_user = msg_obj.user;
-      var chat_li = new_chat_li(msg_obj);
+      chat_li = new_chat_li(msg_obj);
       list.append(chat_li);
     } else {
+      chat_li = list.find('li').last()
       for (line of msg_obj.text.split('\n')) {
-        list.find('li').last().append('<br>');
+        chat_li.append('<br>');
         var isLink = (urlRegex).test(line);
         if(isLink) {
-          list.find( 'li' ).last().append( makeLink(line) );
+          chat_li.append( makeLink( line ) );
         } else {
-          list.find( 'li' ).last().append( document.createTextNode( line ) );
+          chat_li.append( document.createTextNode( line ) );
         }
       }
     }
-
     $('#messages').trigger('update_scroll');
   });
 
