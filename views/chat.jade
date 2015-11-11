@@ -13,7 +13,9 @@ script.
 
   var scrolled_up = false;
   var current_users = {};
-  var urlRegex = /(http\:\/\/|https\:\/\/)?([a-z0-9][a-z0-9\-]*\.)+[a-z0-9][a-z0-9\-]*/i;
+
+  // Basic regex that accepts a line that consists only of a URL
+  var urlRegex = /^(http\:\/\/|https\:\/\/)?([a-z0-9][a-z0-9\-]*\.)+[a-z0-9][a-z0-9\-]*[^\s]*$/i;
 
   $('#chat-navtabs a').click(function (e) {
     // Show it now so that we can do some polishing on the revealed element
@@ -52,18 +54,21 @@ script.
     var max_height = parseInt(elem.css('max-height'), 10);
     scrolled_up = (Math.abs(this.scrollHeight - this.scrollTop - elem.height()) > 10);
   });
+
+  // TODO allow links interweaved with other text
   var makeLink = function(line) {
-    var a = $( '<a>' ).on( 'click', function( event ) {
-      event.preventDefault();
-      var adjusted = line;
-      if(line.indexOf('http') !== 0) {
-        adjusted = 'http://' + line;
-      }
-      window.open( adjusted, '_blank' );
-    } );
-    a.append(line);
+    var adjusted = line;
+    if(line.indexOf('http') !== 0) {
+      adjusted = 'http://' + line;
+    }
+    var a = $( '<a>' ).attr({
+      'href': adjusted,
+      'target': '_blank'
+    });
+    a.append(document.createTextNode(line));
     return a;
   }
+
   var new_chat_li = function(msg_obj) {
     var li = $('<li>');
 
@@ -110,7 +115,7 @@ script.
         li.append('<br>');
         var isLink = (urlRegex).test(line);
         if(isLink) {
-          li.append(makeLink(line));
+          li.append( makeLink(line) );
         } else {
           li.append( document.createTextNode( line ) );
         }
@@ -153,7 +158,7 @@ script.
         list.find('li').last().append('<br>');
         var isLink = (urlRegex).test(line);
         if(isLink) {
-          list.find( 'li' ).last().append(makeLink(line));
+          list.find( 'li' ).last().append( makeLink(line) );
         } else {
           list.find( 'li' ).last().append( document.createTextNode( line ) );
         }
