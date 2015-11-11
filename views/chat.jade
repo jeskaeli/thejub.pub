@@ -1,8 +1,8 @@
 ul(id="chat-navtabs", class="nav nav-tabs")
-  li(id="chat-navtab-li", role="presentation", class="active")
-    a(id="#chat-navtab-a", href="#chat-tab") Chat
-  li(role="presentation")
-    a(id="#jubbin-list-navtab", href="#jubbin-list-tab") Who's jubbin'
+  li(id="chat-navtab-li", role="presentation")
+    a(id="chat-navtab-a", href="#chat-tab", data-toggle='tab') Chat
+  li(id="jubbin-list-navtab-li", role="presentation", class="active")
+    a(id="jubbin-list-navtab-a", href="#jubbin-list-tab", data-toggle='tab') Who's jubbin'
 div(id="chat-tab-content", class="tab-content")
   div(class="tab-pane active" id="chat-tab")
     ul(id="messages", class="jub-list")
@@ -16,11 +16,12 @@ script.
   var urlRegex = /(http\:\/\/|https\:\/\/)?([a-z0-9][a-z0-9\-]*\.)+[a-z0-9][a-z0-9\-]*/i;
 
   $('#chat-navtabs a').click(function (e) {
+    // Show it now so that we can do some polishing on the revealed element
     e.preventDefault();
     $(this).tab('show');
 
     // Depending on which tab we're opening, update certain UI elements
-    if (e.currentTarget.id == '#jubbin-list-navtab') {
+    if (e.currentTarget.id == 'jubbin-list-navtab-a') {
       $('#jubbin-list').empty();
       for (user of current_users) {
         $('#jubbin-list').append(
@@ -160,4 +161,11 @@ script.
     }
 
     $('#messages').trigger('update_scroll');
+  });
+
+  // The chat is the correct initially-active tab; we loaded the page with the
+  // jubbin-list active and now click over to chat as a workaround to make the
+  // jubbin-list hide properly after page load. TODO what's the right way?
+  $( document ).ready(function() {
+    $('#chat-navtab-a').click();
   });
