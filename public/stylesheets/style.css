@@ -130,15 +130,28 @@ body {
   line-height: 2.4;
 }
 /* TODO create class for orange buttons */
-#queue-panel .btn {
-  background-color: #732D0A ;
-  border-color: #732D0A ;
-  float: right ;
-}
 #queue-panel .btn:hover {
   background-color: #e6e6e6;
   border-color: #adadad;
   color: #333;
+}
+#shuffle {
+  background-color: #942D00 ;
+  border-color: #942D00 ;
+  float: right ;
+  margin-left: 10px;
+}
+#delete-track {
+  background-color: #8B0000 ;
+  border-color: #8b0000 ;
+  float: right ;
+  display: none ;
+}
+#send-to-top {
+  background-color: #005D8B ;
+  border-color: #005D8B ;
+  float: right ;
+  display: none ;
 }
 
 /* navbars */
@@ -180,7 +193,6 @@ body {
 #video-queue .queue-item * {
   font-weight: normal;
   padding: 0px 0px 0px 0px;
-  overflow-y:auto;
 }
 
 /* NOTE if you update these spacing values, update redraw_queue_items */
@@ -194,6 +206,17 @@ body {
   min-width: 55px;
   text-align: right;
   float: right;
+}
+/*TODO*/
+#video-queue .queue-item .queue-chk {
+  margin-right: 4px;
+}
+#queue-context-menu {
+  position: absolute;
+  display: none;
+}
+#queue-context-menu .ul {
+  background-color: #000;
 }
 
 /* nav tabs */

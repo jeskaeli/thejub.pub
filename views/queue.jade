@@ -2,13 +2,21 @@ div(class='panel panel-default', id='queue-panel')
   table(class='table', id='queue-banner')
     tbody
       tr
-        th(id='queue-label') Queue:
+        th(id='queue-label') Your queue:
         th(class='right', id='queue-buttons')
           div(class='input-group input-group-md')
             button(class='btn btn-default', type='button', id='shuffle',
                    data-toggle='tooltip', data-placement='top',
                    title='Shuffle')
               span(id='shuffle-icon', class='glyphicon glyphicon-random')
+            button(class='btn btn-default', type='button', id='send-to-top',
+                   data-toggle='tooltip', data-placement='top',
+                   title='Send to top')
+              span(id='send-to-top-icon', class='glyphicon glyphicon-chevron-up')
+            button(class='btn btn-default', type='button', id='delete-track',
+                   data-toggle='tooltip', data-placement='top',
+                   title='Delete')
+              span(id='delete-track-icon', class='glyphicon glyphicon-remove')
 
   div(class='panel-body')
     div(id='video-queue', class='jub-list')
@@ -17,10 +25,46 @@ script.
 
   var my_queue = [];
 
+  function update_queue_buttons() {
+    var dur = 100;
+    if ($('#video-queue li input:checkbox:checked').length > 0) {
+      $('#delete-track').fadeIn(dur);
+      $('#send-to-top').fadeIn(dur);
+      console.log('some checked');
+    } else {
+      $('#delete-track').fadeOut(dur);
+      $('#send-to-top').fadeOut(dur);
+    }
+  }
+
+  function selected_tracks() {
+    var indices = [];
+    var boxes = $('#video-queue li input:checkbox');
+    boxes.each(function(i,v) {
+      if (v.checked) {
+        console.log(i, 'is checked');
+        indices.push(boxes.length - i - 1);
+      }
+    });
+    return indices;
+  }
+
   function new_queue_li(video_obj, title_width) {
     var li = $('<li>').addClass('queue-item');
     var title_span = $('<span>').addClass('track');
     var time_span = $('<span>').addClass('duration');
+    var chk = $('<input>').attr('type', 'checkbox').addClass('queue-chk')
+
+    console.log('chk', chk);
+
+    // Set initial state.
+    chk.val($(this).is(':checked'));
+
+    // The 'delete' and 'send to top' buttons only appear if a track is selected
+    // TODO implement shift + click http://4pcbr.com/topic/grouped_checkboxes_select_with_shift__click
+    chk.change(update_queue_buttons);
+
+    li.append(chk)
     li.append(title_span);
     li.append(time_span);
 
@@ -43,11 +87,12 @@ script.
 
   // Redraw queue, taking into account the current width of the list
   $('#video-queue').bind('redraw_items',function() {
-    // 65 = 55 + 4 + 3 + 3 = duration width - title margin-right - padding.
+    // 82 = 55 + 13 + 4 + 4 + 3 + 3
+    // = duration width + checkbox width + checkbox padding + title margin-right + padding.
     // TODO can't read this from the page because the elements aren't on the
-    // DOM yet. Can I just read the style sheet? Someone please tell me the
-    // right way to do this.
-    var pad = 65;
+    // DOM yet. Need to compute this and truncate after everything is drawn.
+    // That will also solve #87.
+    var pad = 82;
     var title_width = $(this).width() - pad;
 
     // if scrolling, add some more padding
@@ -60,7 +105,7 @@ script.
       var item = new_queue_li(video, title_width);
       $(this).prepend(item);
     }
-    $('#queue-label').text(get_username() + "'s queue (" + my_queue.length + ")");
+    $('#queue-label').text("Your queue (" + my_queue.length + ")");
   });
 
   function update_queue(queue) {
@@ -68,6 +113,7 @@ script.
       my_queue = queue;
       $('#video-queue').trigger('redraw_items');
     }
+    update_queue_buttons();
   };
 
   // Server tells us about video state changes
@@ -82,10 +128,24 @@ script.
     return false;
   });
 
-  // Document is loaded so we can populate our video queue.
+  // Delete track(s)
+  $('#delete-track').on('click', function(e) {
+    console.log('deleting track(s)');
+    socket.emit('delete tracks', get_username(), selected_tracks(), update_queue);
+    return false;
+  });
+
+  // Send track(s) to top
+  $('#send-to-top').on('click', function(e) {
+    console.log('sending track(s) to top');
+    socket.emit('send to top', get_username(), selected_tracks(), update_queue);
+    return false;
+  });
+
   $( document ).ready(function() {
+    // Document is loaded so we can populate our video queue.
     console.log('requesting queue state', get_username());
-    $('#queue-label').text(get_username() + "'s queue:");
     socket.emit('queue', get_username());
+    update_queue_buttons();
   });
 

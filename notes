@@ -6,6 +6,7 @@ Username and password
 
 Authentication for the websockets
   https://devcenter.heroku.com/articles/websocket-security
+  http://howtonode.org/socket-io-auth
 
 Using google's Youtube APIs from the client
   https://developers.google.com/youtube/v3/guides/auth/client-side-web-apps?hl=en
@@ -16,3 +17,12 @@ Architecture
 
 Smooth slide-out menu
 http://apeatling.com/2014/building-smooth-sliding-mobile-menu/
+
+Queue UX
+  Final design:
+    - select a track by clicking anywhere in the track's box
+    - buttons appear when you select tracks
+    - right-click context menu
+      - delete
+      - send to top
+
