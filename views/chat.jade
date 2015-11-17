@@ -120,8 +120,9 @@ script.
           li.append( document.createTextNode( line ) );
         }
       }
-      if(msg_obj.hasOwnProperty( 'customPanelColor' )) {
+      if (msg_obj.hasOwnProperty( 'customPanelColor' )) {
         li.css('background', msg_obj.customPanelColor);
+        time.css('color', '#888899');
       }
     }
     return li;

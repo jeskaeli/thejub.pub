@@ -7,7 +7,22 @@ div(class='panel panel-default', id='player-panel')
         th(id='time-left')
   div(class='panel-body')
     div(id='player')
-  //div(class='panel-footer' id='player-footer') No videos queued. TODO
+  table(class='table', id='player-footer')
+    tbody
+      tr
+        th(id='like-dislike-th')
+          div(class='input-group input-group-md')
+            button(class='btn btn-default', type='button', id='like-btn',
+                   data-toggle='tooltip', data-placement='top',
+                   title='Hoot!')
+              span(id='like-icon', class='glyphicon glyphicon-star')
+              span(id='num-likes', style='margin-left: 4px;') 0
+              //button(class='btn btn-default', type='button', id='dislike-btn',
+              //       data-toggle='tooltip', data-placement='top',
+              //       title='K.')
+              //  span(id='dislike-icon', class='glyphicon glyphicon-thumbs-down')
+              //  span(id='num-dislikes', style='margin-left: 4px;') 0
+
 
 script.
 
@@ -43,6 +58,7 @@ script.
       update_time_left();
       update_current_dj(state.user, state.user_color);
       update_current_track(state.title);
+      update_opinions(state.opinions);
     }
   }
 
@@ -87,6 +103,31 @@ script.
     }
   }
 
+  // Later, use this to make avatars dance
+  function update_opinions(opinions) {
+    var likes = 0, dislikes = 0;
+    if (opinions) {
+      for (v of opinions) {
+        if (v)
+          likes += 1;
+        else
+          dislikes += 1;
+      }
+    }
+    console.log('update opinions', likes, dislikes);
+    $('#num-likes').text(likes);
+    $('#num-dislikes').text(dislikes);
+  }
+
+  socket.on('num likes', function(num) {
+    console.log('num likes', num);
+    $('#num-likes').text(num);
+  });
+
+  socket.on('num dislikes', function(num) {
+    $('#num-dislikes').text(num);
+  });
+
   function update_time_left() {
     this.time = new Date(1970, 1, 1); // Unix epoch
     var elem = $('#time-left');
@@ -111,6 +152,18 @@ script.
     }
   }
   setInterval(update_time_left, 1000);
+
+  // Like
+  $('#like-btn').on('click', function(e) {
+    socket.emit('like', get_username());
+    return false;
+  });
+
+  // Dislike
+  $('#dislike-btn').on('click', function(e) {
+    socket.emit('dislike', get_username());
+    return false;
+  });
 
   /* Everything below here is boilerplate for the Google YT IFrame */
 
