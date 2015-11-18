@@ -114,13 +114,11 @@ script.
           dislikes += 1;
       }
     }
-    console.log('update opinions', likes, dislikes);
     $('#num-likes').text(likes);
     $('#num-dislikes').text(dislikes);
   }
 
   socket.on('num likes', function(num) {
-    console.log('num likes', num);
     $('#num-likes').text(num);
   });
 
@@ -217,9 +215,9 @@ script.
   // the player should play for six seconds and then stop.
   var done = false;
   function onPlayerStateChange(event) {
-    console.log("player state change:", event.data)
     if (event.data == YT.PlayerState.PAUSED) {
-      event.target.playVideo(); // TODO does this violate the youtube ToS?
+      // TODO does this violate the youtube ToS?
+      event.target.playVideo();
     }
   }
 

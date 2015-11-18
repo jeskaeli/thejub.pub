@@ -116,7 +116,7 @@ app.db = require('./lib/db')(config, app.models);
 app.gapi = require('./lib/gapi')(config); // doesn't need to be an app member
 app.bot = require('./lib/bot')(config, app.gapi);
 app.chat = require('./lib/chat')(config, app.bot);
-app.jub = require('./lib/jub_dj')(config, app.gapi, app.chat);
+app.jub = require('./lib/jub_dj')(config, app.gapi, app.chat, app.db);
 app.config = config;
 
 // Note: in ./bin/www -> socket-routing.js, the jub receives a callback
@@ -127,7 +127,7 @@ app.config = config;
 var token = app.auth.gen_token(function(token) {
   console.log("generated token:", token);
   console.log("encoded token:", app.auth.encode_token(token));
-  app.db.store_auth('123456abcdef', token, 1);
+  app.db.storeAuth('123456abcdef', token, 1);
 });
 /* scratch over */
 
