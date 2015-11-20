@@ -29,6 +29,9 @@ script.
   $( document ).ready(function() {
     socket.emit('user loaded', get_username(), function(assigned) {
       store_username(assigned.name);
+
+      // Update DJ button (and local state)
+      $('#join-dj').trigger('set-dj-state', assigned.dj);
     });
   });
 

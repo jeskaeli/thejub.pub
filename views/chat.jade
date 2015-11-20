@@ -151,10 +151,11 @@ script.
 
     var list = $('#messages');
     var chat_li;
-    if(msg_obj.user != this.last_user || msg_obj.is_bot ||
-       msg_obj.emote || this.last_emote) {
+    if(msg_obj.user != this.last_user || msg_obj.is_bot || msg_obj.emote
+       || this.last_emote || this.last_color != msg_obj.color) {
       this.last_emote = msg_obj.emote;
       this.last_user = msg_obj.user;
+      this.last_color = msg_obj.color;
       chat_li = new_chat_li(msg_obj);
       list.append(chat_li);
     } else {

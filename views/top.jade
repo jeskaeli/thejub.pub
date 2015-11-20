@@ -274,9 +274,9 @@ script.
     draw_dj_state();
   });
 
-  // Server has some user data for us
-  socket.on('user data', function(data) {
-    console.log('received user data:', data);
-    djing = data.dj;
+  // Some other part of the page wants to set the DJ state
+  $('#join-dj').on('set-dj-state', function(e, new_state) {
+    console.log('dj-state', new_state);
+    djing = new_state;
     draw_dj_state();
   });
