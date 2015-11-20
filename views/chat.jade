@@ -104,7 +104,15 @@ script.
         'float': 'right',
         'color': '#666666'
       });
-      time.append(document.createTextNode(strftime('%I:%M:%S %p')));
+      var time_format = '%I:%M:%S %p'
+      var msg_time = '';
+      console.log('chat msg', msg_obj);
+      if (msg_obj.hasOwnProperty('time')) {
+        msg_time = strftime(time_format, new Date(msg_obj.time));
+      } else {
+        msg_time = strftime(time_format);
+      }
+      time.append(document.createTextNode(msg_time));
       heading.append(time);
 
       // Append heading to chat message
@@ -132,10 +140,7 @@ script.
   socket.on('chat message', function(msg_obj) {
     this.last_user = this.last_user || "";
     this.last_emote = this.last_emote || false;
-
-    if (msg_obj.text == undefined) {
-      return;
-    }
+    if (msg_obj.text == undefined) return;
     msg_obj.user = msg_obj.user || '???';
 
     // Detect mentions and notify in title bar
