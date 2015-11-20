@@ -106,7 +106,6 @@ script.
       });
       var time_format = '%I:%M:%S %p'
       var msg_time = '';
-      console.log('chat msg', msg_obj);
       if (msg_obj.hasOwnProperty('time')) {
         msg_time = strftime(time_format, new Date(msg_obj.time));
       } else {
