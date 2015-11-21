@@ -127,8 +127,9 @@ script.
           li.append( document.createTextNode( line ) );
         }
       }
-      if (msg_obj.hasOwnProperty( 'customPanelColor' )) {
-        li.css('background', msg_obj.customPanelColor);
+      if (msg_obj.hasOwnProperty( 'customPanelBorder' )) {
+        li.css('list-style-position', 'inside');
+        li.css('border', '3px solid ' + msg_obj.customPanelBorder);
         time.css('color', '#888899');
       }
     }
