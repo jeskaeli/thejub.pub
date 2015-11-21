@@ -17,3 +17,9 @@ The server can be started with the following command:
 $ TEST=1 npm start
 ```
 Then visit `http://localhost:3000/ROUTE` in your browser, where `ROUTE` is the value of `"private_route"` in `config.js`. You can specify a different port number using the `PORT` environment variable.
+
+## Testing
+Tests are slowly being added. To run the regression tests:
+```
+$ ./test/baseline
+```
