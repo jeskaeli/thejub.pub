@@ -1,0 +1,34 @@
+#! /bin/bash
+
+regress_dir=$(dirname $0)/../regress
+
+if [[ $1 == '-b' ]]; then
+  write_bl=1
+fi
+
+echo
+for file in $regress_dir/*.js; do
+  bl=${file}.baseline
+  base=$(basename $file)
+  # Has a baseline
+  if [[ -f $bl ]] ; then
+    printf "%-40s " "${base}:"
+    # Writing baselines
+    if [ -z $write_bl ] ; then
+      diff=$(diff $bl <(node $file))
+      if [[ $? -eq 0 ]] ; then
+        printf "[ \e[1;32m%-6s\e[0m ]\n" PASSED
+      else
+        printf "[ \e[1;31m%-6s\e[0m ]\n" FAILED
+        echo $diff
+      fi
+    # Diff baselines
+    else
+      node $file > $bl
+      if [[ $? -eq 0 ]] ; then
+        printf "[ \e[1;34m%-9s\e[0m ]\n" BASELINED
+      fi
+    fi
+  fi
+done
+echo
