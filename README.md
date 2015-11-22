@@ -3,6 +3,8 @@ chat + shared video
 
 [![Build Status](https://travis-ci.org/aromatt/thejub.pub.svg)](https://travis-ci.org/aromatt/thejub.pub)
 
+![thejub.pub screenshot](/public/images/thejub.pub.png)
+
 ## Setup
 1. Clone this repo
 2. Install node.js + npm
