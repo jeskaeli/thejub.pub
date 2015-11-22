@@ -9,7 +9,7 @@ chat + shared video
 1. Clone this repo
 2. Install node.js + npm
  * http://www.sitepoint.com/beginners-guide-node-package-manager/
- * Make sure the version of node you install meets the `"engines"` requirement in `package.json`.
+ * Make sure the version of node.js you install meets the `"engines"` requirement in `package.json`.
 3. Install the dependencies. From the project directory: `$ npm install --loglevel verbose`
 4. Copy the test `config.js` under `test/` to the root level: `$ cp test/config.js config.js`
 
