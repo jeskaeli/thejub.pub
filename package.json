@@ -7,6 +7,9 @@
   },
   "engineStrict": true,
   "engines" : { "node" : ">=4.0.0" },
+  "scripts": {
+    "test": "./test/baseline"
+  },
   "dependencies": {
     "body-parser": "~1.13.2",
     "collections": "^1.2.4",
