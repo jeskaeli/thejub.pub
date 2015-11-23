@@ -1,5 +1,14 @@
 #!/bin/bash -e
 
+# Install dependencies
 npm install --loglevel verbose
+
+# Run tests
+./test/baseline
+if [[ $? -ne 0 ]]; then
+  echo "Tests failed, not starting server."
+fi
+
+# Kill running node process and restart
 if pidof node; then kill `pidof node`; fi;
 nohup env PORT=9292 npm start >> /var/log/jub/jub.log 2>&1 &
