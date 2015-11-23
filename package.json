@@ -3,12 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "test": "./test/baseline"
   },
   "engineStrict": true,
-  "engines" : { "node" : ">=4.0.0" },
-  "scripts": {
-    "test": "./test/baseline"
+  "engines": {
+    "node": ">=4.0.0"
   },
   "dependencies": {
     "body-parser": "~1.13.2",
@@ -23,6 +22,7 @@
     "moment": "^2.10.6",
     "mongoose": "^4.1.8",
     "morgan": "^1.6.1",
+    "nock": "^3.1.1",
     "randbytes": "0.0.1",
     "serve-favicon": "~2.3.0",
     "shelljs": "^0.5.3",

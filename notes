@@ -26,3 +26,22 @@ Queue UX
       - delete
       - send to top
 
+
+
+TESTING
+  - nock
+    - can be used like VCR, but currently breaks when trying to record/playback requests
+      that include query params with spaces in them
+  - MODULES
+    - jub_util
+    - gapi
+      - nock
+    - jub
+      - fixtures with state
+      - no sockets
+    - sockets + jub (functional)
+      - mock out db?
+      - http://liamkaufman.com/blog/2012/01/28/testing-socketio-with-mocha-should-and-socketio-client/
+      - chat
+    - db
+      - nock?
