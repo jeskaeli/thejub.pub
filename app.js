@@ -116,7 +116,7 @@ app.db = require('./lib/db')(config, app.models);
 app.gapi = require('./lib/gapi')(config); // doesn't need to be an app member
 app.bot = require('./lib/bot')(config, app.gapi);
 app.chat = require('./lib/chat')(config, app.bot);
-app.jub = require('./lib/jub_dj')(config, app.gapi, app.chat, app.db);
+app.jub = require('./lib/jub')(config, app.gapi, app.chat, app.db);
 app.config = config;
 
 // Note: in ./bin/www -> socket-routing.js, the jub receives a callback
