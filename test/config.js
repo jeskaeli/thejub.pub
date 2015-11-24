@@ -13,7 +13,7 @@ module.exports = {
       'some update'
     ]
   },
-  private_route: '/default_private_route',
+  private_route: '/test_private_route',
   moved_message: "Ask for the new URL!",
   chat_cache_limit: 1000,
 }

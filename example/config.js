@@ -14,6 +14,6 @@ module.exports = {
             'A lame update'
         ]
     },
-    private_route: '/foooooooooo', // I'm not telling
+    private_route: '/test_private_route', // I'm not telling
     moved_message: "This is a message telling users how to find out what the private route is."
 };

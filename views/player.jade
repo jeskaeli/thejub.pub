@@ -50,11 +50,13 @@ script.
       };
       var video_progress = (state.server_time - start_time) / 1000;
       console.log("apply video state", id, video_progress);
-      player.loadVideoById({
-        'videoId': id,
-        'startSeconds': video_progress,
-        'suggestedQuality': 'large'
-      });
+      if (video_progress) {
+        player.loadVideoById({
+          'videoId': id,
+          'startSeconds': video_progress,
+          'suggestedQuality': 'large'
+        });
+      }
       update_time_left();
       update_current_dj(state.user, state.user_color);
       update_current_track(state.title);
@@ -206,7 +208,7 @@ script.
       player.unMute();
     }
     player_ready = true;
-    socket.emit('video state', 0);
+    socket.emit('video state');
     refresh_sizes(true);
   }
 
