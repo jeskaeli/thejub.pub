@@ -27,15 +27,15 @@ module.exports = function (name, options) {
           throw e;
       }
       if (record) {
-        console.log('recording');
         _nock.recorder.rec({
           dont_print: true,
         });
       } else {
-        console.log('loading fixture');
         require('../' + fixture_path);
-        console.log('loaded fixture');
-        test_fn();
+      }
+
+      // Run the test
+      test_fn(function() {
 
         // Save the recording if we're recording
         if (record) {
@@ -44,7 +44,7 @@ module.exports = function (name, options) {
           shell.mkdir('-p', fixtures_dir);
           fs.writeFile(fixture_path, text);
         }
-      }
-    },
+      });
+    }
   }
 }

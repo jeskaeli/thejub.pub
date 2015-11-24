@@ -6,6 +6,8 @@ if [[ $1 == '-b' ]]; then
   write_bl=1
 fi
 
+exit_code=0
+
 echo
 for file in $regress_dir/*.js; do
   bl=${file}.baseline
@@ -20,6 +22,7 @@ for file in $regress_dir/*.js; do
         printf "[ \e[1;32m%-6s\e[0m ]\n" PASSED
       else
         printf "[ \e[1;31m%-6s\e[0m ]\n" FAILED
+        exit_code=1
         echo $diff
       fi
     fi
@@ -32,3 +35,5 @@ for file in $regress_dir/*.js; do
   fi
 done
 echo
+
+exit $exit_code
