@@ -8,12 +8,16 @@ module.exports = {
     token_len: '20'
   },
   latest_updates: {
-    date: '2015-11-6',
+    date: '2015-01-01',
     list: [
-      'some update'
+      'Update 1',
+      'Update 2'
     ]
   },
   private_route: '/test_private_route',
   moved_message: "Ask for the new URL!",
-  chat_cache_limit: 1000,
+  chat: {
+    cache_dir: 'test/chat_cache',
+    cache_limit: 1000,
+  }
 }

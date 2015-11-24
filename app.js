@@ -113,8 +113,8 @@ app.use(function(err, req, res, next) {
 app.auth = require('./lib/auth')(config);
 app.models = require('./lib/models')(config, app.auth);
 app.db = require('./lib/db')(config, app.models);
-app.gapi = require('./lib/gapi')(config); // doesn't need to be an app member
-app.bot = require('./lib/bot')(config, app.gapi);
+app.gapi = require('./lib/gapi')(config);
+app.bot = require('./lib/bot')(config);
 app.chat = require('./lib/chat')(config, app.bot);
 app.jub = require('./lib/jub')(config, app.gapi, app.chat, app.db);
 app.config = config;
