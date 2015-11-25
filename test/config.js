@@ -4,6 +4,7 @@ module.exports = {
   mongodb_db: 'jub-dj-dev',
   google_api_server_key: 'AIzaSyAn4jI9fRs2i4A9Wvnfwx_XJ6m9rnUw4I0',
   google_api_browser_key: 'AIzaSyAn4jI9fRs2i4A9Wvnfwx_XJ6m9rnUw4I0',
+  google_api_cx_code: '015617422038491686005:ibyzcnlnobg',
   auth: {
     token_len: '20'
   },

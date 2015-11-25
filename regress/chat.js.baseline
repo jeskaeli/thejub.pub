@@ -63,6 +63,19 @@ broadcasting:
   is_bot: true,
   color: '#888899' }
 
+=== A client insults brice ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: brice sucks',
+  is_bot: false,
+  color: '#1f8e0a' }
+bot received new message: brice sucks
+broadcasting:
+ { text: 'BRICE SUUUUUX. But Whit kind of does too.',
+  user: 'jubbot',
+  is_bot: true,
+  color: '#888899' }
+
 === A client changes its color ===
 test_user set color to limegreen
 updating preference for test_user { color: 'limegreen' }
@@ -85,6 +98,36 @@ broadcasting:
 === Test "video skipped" event ===
 broadcasting:
  { text: 'test_user decided to skip.',
+  user: 'jubbot',
+  is_bot: true,
+  color: '#888899' }
+
+=== A client uses "show me" ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: show me pickles',
+  is_bot: false,
+  color: 'limegreen' }
+bot received new message: show me pickles
+gapi image search: pickles
+shorten url: [ { link: 'http://pretend.image' } ]
+broadcasting:
+ { text: 'http://pretend.shortened',
+  user: 'jubbot',
+  is_bot: true,
+  color: '#888899' }
+
+=== A client uses "show me" and brice sucks ===
+broadcasting:
+ { user: 'test_user',
+  text: 'jubbot: show me brice sucks',
+  is_bot: false,
+  color: 'limegreen' }
+bot received new message: show me brice sucks
+gapi image search: brice sucks
+shorten url: [ { link: 'http://pretend.image' } ]
+broadcasting:
+ { text: 'http://pretend.shortened',
   user: 'jubbot',
   is_bot: true,
   color: '#888899' }

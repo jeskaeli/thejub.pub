@@ -1,6 +1,6 @@
 Results: 21
 First result: { kind: 'youtube#searchResult',
-  etag: '"NA_P7zd7LFbUU1ltSVrtwDk6-R4/flM0TBGPW4iXJxEkirhorDQJDAI"',
+  etag: '"mPrpS7Nrk6Ggi_P7VJ8-KsEOiIw/flM0TBGPW4iXJxEkirhorDQJDAI"',
   id: { kind: 'youtube#video', videoId: 'jFW_zaXFzcs' },
   snippet: 
    { publishedAt: '2014-03-20T19:41:51.000Z',
