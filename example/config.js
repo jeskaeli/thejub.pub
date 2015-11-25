@@ -7,6 +7,9 @@ module.exports = {
   // by both the server and the browser.
   google_api_server_key: 'GOOGLE-SERVER-KEY-HERE', // get your own key
   google_api_browser_key: 'GOOGLE-BROWSER-KEY-HERE', // get your own key
+
+  // https://cse.google.com/
+  google_api_cx_id: 'GOOGLE-CSE-CX-ID-HERE', // get your own key
   auth: {
     token_len: '20'
   },
@@ -17,7 +20,7 @@ module.exports = {
       'A lame update'
     ]
   },
-  private_route: '/test_private_route', // I'm not telling
+  private_route: '/test_private_route',
   moved_message: "This is a message telling users how to find out what the private route is.",
   chat: {
     cache_dir: './chat_cache',
