@@ -26,8 +26,12 @@ nav(class='navbar navbar-inverse navbar-fixed-top' id='top-nav')
           span(id='skip-icon', class='glyphicon glyphicon-fast-forward')
         button(class='btn btn-default',type='button',
                id='mute', data-toggle='tooltip',
-               data-placement='bottom', title='Skip')
+               data-placement='bottom', title='Mute')
           span(id='mute-icon', class='glyphicon glyphicon-volume-up')
+        button(class='btn btn-default',type='button',
+               id='toggle-image', data-toggle='tooltip',
+               data-placement='bottom', title='Hide Inline Images')
+          span(id='toggle-image-icon', class='glyphicon glyphicon-eye-open')
 
   ul(class='nav navbar-nav navbar-right')
     // Username
@@ -48,10 +52,12 @@ script.
   var MAX_RESULTS = 7;
   var MAX_PRETTY_LEN = 60;
   var djing = false;
+  var image_cookie_key = 'hide-inline-images';
 
   //TODO: load the controls and player in a deliberate order so one can reflect the other's mute state
   $( document ).ready(function() {
     draw_mute_state();
+    draw_show_inline_image_state();
   });
 
   function draw_mute_state() {
@@ -62,6 +68,16 @@ script.
     } else {
       $('#mute-icon').attr('class', 'glyphicon glyphicon-volume-up');
       $('#mute').attr('title', 'Mute');
+    }
+  }
+  function draw_show_inline_image_state() {
+    var hide_inline_image = get_cookie(image_cookie_key);
+    if (hide_inline_image == 1) {
+      $('#toggle-image-icon').attr('class', 'glyphicon glyphicon-eye-close');
+      $('#toggle-image').attr('title', 'Show Inline Images');
+    } else {
+      $('#toggle-image-icon').attr('class', 'glyphicon glyphicon-eye-open');
+      $('#toggle-image').attr('title', 'Hide Inline Images');
     }
   }
 
@@ -246,20 +262,27 @@ script.
   // Mute button
   $('#mute').on('click', function(e) {
     e.preventDefault();
-    var expiration_date = new Date();
-    expiration_date.setFullYear(expiration_date.getFullYear() + 1);
     if (player.isMuted()) {
       player.unMute();
-      document.cookie = 'muted=0; ' + 'expires=' + expiration_date.toGMTString();
-    }
-    else {
+      set_cookie('muted', 0);
+    } else {
       player.mute();
-      document.cookie = 'muted=1; ' + 'expires=' + expiration_date.toGMTString();
+      set_cookie('muted', 1);
     }
     draw_mute_state();
     return false;
   });
-
+  // Toggle button
+  $('#toggle-image').on('click', function(e) {
+    e.preventDefault();
+    if (get_cookie(image_cookie_key) == 1) {
+      set_cookie(image_cookie_key, 0);
+    } else {
+      set_cookie(image_cookie_key, 1);
+    }
+    draw_show_inline_image_state();
+    return false;
+  });
   // DJ button
   $('#join-dj').on('click', function() {
     if (!djing) {
