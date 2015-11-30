@@ -86,22 +86,20 @@ script.
     return image;
   }
 
-  function loopThroughMessageAndAddToList(msg_obj,li){
-    _.each(msg_obj.text.split('\n'), function(line) {
-      li.append('<br>');
-      var isLink = (urlRegex).test(line);
-      if(isLink) {
-        var isImage = (imageRegex).test( line );
-        if ( isImage && get_cookie('hide-inline-images') != 1) {
-          li.append( makeImage( line ) );
-        } else {
-          li.append( makeLink( line ) );
-        }
+  function convertLineToElement(line){
+    var isLink = (urlRegex).test(line);
+    if(isLink) {
+      var isImage = (imageRegex).test( line );
+      if ( isImage && get_cookie('hide-inline-images') != 1) {
+        return makeImage( line );
       } else {
-        li.append( document.createTextNode( line ) );
+        return makeLink( line );
       }
-    } );
+    } else {
+      return document.createTextNode( line );
+    }
   };
+
   var new_chat_li = function(msg_obj) {
     var li = $('<li>');
 
@@ -151,7 +149,10 @@ script.
       li.append(heading);
 
       // Add each line of the message, with <br>'s in between
-      loopThroughMessageAndAddToList(msg_obj, li);
+      _.each(msg_obj.text.split('\n'), function(line) {
+        li.append('<br>');
+        li.append(convertLineToElement(line));
+      } );
       if (msg_obj.hasOwnProperty( 'customPanelBorder' )) {
         li.css('list-style-position', 'inside');
         li.css('border', '1px solid ' + msg_obj.customPanelBorder);
@@ -190,7 +191,10 @@ script.
       list.append(chat_li);
     } else {
       chat_li = list.find('li').last()
-      loopThroughMessageAndAddToList(msg_obj, chat_li);
+      _.each(msg_obj.text.split('\n'), function(line) {
+        chat_li.append('<br>');
+        chat_li.append(convertLineToElement(line));
+      } );
     }
     $('#messages').trigger('update_scroll');
   });
