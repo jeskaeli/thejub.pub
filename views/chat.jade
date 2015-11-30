@@ -15,7 +15,8 @@ script.
   var current_users = {};
 
   // Basic regex that accepts a line that consists only of a URL
-  var urlRegex = /^(http\:\/\/|https\:\/\/)?([a-z0-9][a-z0-9\-]*\.)+[a-z0-9][a-z0-9\-]*[^\s]*$/i;
+  var urlRegex = /^(http:\/\/|https:\/\/)?([a-z0-9][a-z0-9\-]*\.)+[a-z0-9][a-z0-9\-]*[^\s]*$/i;
+  var imageRegex = /[^\s]+(\.(jpeg|jpg|png|gif|bmp))$/i;
 
   $('#chat-navtabs a').click(function (e) {
     // Show it now so that we can do some polishing on the revealed element
@@ -69,6 +70,38 @@ script.
     return a;
   }
 
+  var makeImage = function(line) {
+    var adjusted = line;
+    if(line.indexOf('http') !== 0) {
+      adjusted = 'http://' + line;
+    }
+    var image = $( '<img>' ).attr({
+      'src': adjusted
+    });
+    _.defer(function() {
+      var elemMaxWidth = $('#messages > li');
+      $( this ).css( 'width', elemMaxWidth.width() + 'px' );
+      $( this ).css( 'height', 'auto' );
+    }.bind(image))
+    return image;
+  }
+
+  function loopThroughMessageAndAddToList(msg_obj,li){
+    _.each(msg_obj.text.split('\n'), function(line) {
+      li.append('<br>');
+      var isLink = (urlRegex).test(line);
+      if(isLink) {
+        var isImage = (imageRegex).test( line );
+        if ( isImage && get_cookie('hide-inline-images') != 1) {
+          li.append( makeImage( line ) );
+        } else {
+          li.append( makeLink( line ) );
+        }
+      } else {
+        li.append( document.createTextNode( line ) );
+      }
+    } );
+  };
   var new_chat_li = function(msg_obj) {
     var li = $('<li>');
 
@@ -118,15 +151,7 @@ script.
       li.append(heading);
 
       // Add each line of the message, with <br>'s in between
-      for (line of msg_obj.text.split('\n')) {
-        li.append('<br>');
-        var isLink = (urlRegex).test(line);
-        if(isLink) {
-          li.append( makeLink(line) );
-        } else {
-          li.append( document.createTextNode( line ) );
-        }
-      }
+      loopThroughMessageAndAddToList(msg_obj, li);
       if (msg_obj.hasOwnProperty( 'customPanelBorder' )) {
         li.css('list-style-position', 'inside');
         li.css('border', '1px solid ' + msg_obj.customPanelBorder);
@@ -165,15 +190,7 @@ script.
       list.append(chat_li);
     } else {
       chat_li = list.find('li').last()
-      for (line of msg_obj.text.split('\n')) {
-        chat_li.append('<br>');
-        var isLink = (urlRegex).test(line);
-        if(isLink) {
-          chat_li.append( makeLink( line ) );
-        } else {
-          chat_li.append( document.createTextNode( line ) );
-        }
-      }
+      loopThroughMessageAndAddToList(msg_obj, chat_li);
     }
     $('#messages').trigger('update_scroll');
   });
