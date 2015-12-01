@@ -40,7 +40,7 @@ To add a new test, add a script to the `regress/` directory and run
 $ ./test/baseline -b
 
 # Windows
-$ node test/baseline -b
+$ node test/baseline.js -b
 ```
 
 Make sure no other tests' baselines changed -- if they did, verify that the
