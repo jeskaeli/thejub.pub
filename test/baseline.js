@@ -1,11 +1,9 @@
-#!/usr/bin/env node
-
 /* Regression testing tool. Test cases (regress/*.js) are run and each case's
  * output is compared with its corresponding baseline file. Any difference
  * between the test's baseline (regress/*.js.baseline) and the output of the
  * invoked test is considered a test failure. USAGE:
  *
- *   node test/baseline.js [-v] [-b] [TEST_CASE [, ... ]]
+ *   $ node test/baseline.js [-v] [-b] [TEST_CASE [, ... ]]
  *
  * -b: write new baselines
  * -v: verbose (show diffs)
