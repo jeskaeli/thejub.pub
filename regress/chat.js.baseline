@@ -139,3 +139,18 @@ broadcasting:
   is_bot: false,
   color: 'limegreen' }
 has time? true
+
+=== A client uses a hashtag in a message ===
+broadcasting:
+ { user: 'test_user',
+  text: 'This test passes #blessed',
+  is_bot: false,
+  color: 'limegreen' }
+has time? true
+twitter search: #blessed
+broadcasting:
+ { text: 'A twitter search result',
+  user: 'jubbot',
+  is_bot: true,
+  color: '#888899' }
+has time? true

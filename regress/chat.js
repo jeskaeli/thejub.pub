@@ -17,7 +17,16 @@ var gapi = (function() {
   };
 })();
 
-var bot = require('../lib/bot')(config, gapi);
+var twitter = (function() {
+  return {
+    searchOneText: function(query, cb) {
+      console.log('twitter search:', query);
+      cb("A twitter search result");
+    },
+  };
+})();
+
+var bot = require('../lib/bot')(config, gapi, twitter);
 var chat = require('../lib/chat')(config, bot);
 
 chat.jub = (function() {
@@ -126,5 +135,11 @@ chat.save_chat_msg = function(obj) {
 chat.new_chat_message({
   user: TEST_USER,
   text: 'foo'
+});
+
+testCase('A client uses a hashtag in a message');
+chat.new_chat_message({
+  user: TEST_USER,
+  text: 'This test passes #blessed'
 });
 
