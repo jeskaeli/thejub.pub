@@ -195,9 +195,9 @@ body {
   padding: 0px 0px 0px 0px;
 }
 
-/* NOTE if you update these spacing values, update redraw_queue_items */
+/* NOTE if you update these spacing values, update lib/queue.js:'redraw_items' */
 #video-queue li{
-  padding: 3px 3px 3px 3px;
+  padding: 3px 3px 3px 5px;
 }
 #video-queue .queue-item .title {
   margin-right: 4px;
