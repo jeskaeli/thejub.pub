@@ -121,7 +121,7 @@ script.
     var tformat = (video.duration / 1000) >= 3600 ? '%k:%M:%S' : '%M:%S';
     time = new Date(1970, 1, 1); // Unix epoch
     time.setSeconds(video.duration / 1000);
-    time_span.text('(' + strftime(tformat, time) + ')');
+    time_span.text('(' + strftime(tformat, time).trim() + ')');
 
     title_span.text(video.title);
 
@@ -137,13 +137,13 @@ script.
 
   // Redraw queue, taking into account the current width of the list
   $('#video-queue').bind('redraw_items',function() {
-    // 82 = 55 + 13 + 4 + 4 + 5 + 3
+    // 84 = 55 + 13 + 4 + 4 + 5 + 3
     // = duration width + checkbox width + checkbox padding + title margin-right + padding.
     // Can't read this from the page because the elements aren't on the
     // DOM yet. Need to compute this and truncate after everything is drawn.
     // TODO ^ use _.defer?
     // That will also solve #87.
-    var pad = 82;
+    var pad = 84;
     var title_width = $(this).width() - pad;
 
     // if scrolling, add some more padding
