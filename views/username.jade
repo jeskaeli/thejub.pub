@@ -32,6 +32,8 @@ script.
 
       // Update DJ button (and local state)
       $('#join-dj').trigger('set-dj-state', assigned.dj);
+
+      $('#requeue-videos').prop('checked', !!(assigned.requeueVideos));
     });
   });
 

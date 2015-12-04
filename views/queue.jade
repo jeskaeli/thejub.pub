@@ -1,29 +1,42 @@
-div(class='panel panel-default', id='queue-panel')
-  table(class='table', id='queue-banner')
-    tbody
-      tr
-        th
-          input(id='select-all', type='checkbox',
-                style='margin: 10px 10px 10px 0px',
-                data-toggle='tooltip', title='Select all')
-          span(id='queue-label') Queue
-        th(class='right', id='queue-buttons')
-          div(class='input-group input-group-md')
-            button(class='btn btn-default', type='button', id='shuffle',
-                   data-toggle='tooltip', data-placement='top',
-                   title='Shuffle')
-              span(id='shuffle-icon', class='glyphicon glyphicon-random')
-            button(class='btn btn-default', type='button', id='send-to-top',
-                   data-toggle='tooltip', data-placement='top',
-                   title='Send to top')
-              span(id='send-to-top-icon', class='glyphicon glyphicon-chevron-up')
-            button(class='btn btn-default', type='button', id='delete-track',
-                   data-toggle='tooltip', data-placement='top',
-                   title='Delete')
-              span(id='delete-track-icon', class='glyphicon glyphicon-remove')
+ul(id="queue-navtabs", class="nav nav-tabs")
+  li(id="queue-navtab-li", role="presentation")
+    a(id="queue-navtab-a", href="#queue-tab", data-toggle='tab') Queue
+  li(id="settings-navtab-li", role="presentation", class="active")
+    a(id="settings-navtab-a", href="#settings-tab", data-toggle='tab') Settings
+div(id="queue-tab-content", class="tab-content")
+  div(class="tab-pane" id="queue-tab")
+    div(class='panel panel-default', id='queue-panel')
+      table(class='table', id='queue-banner')
+        tbody
+          tr
+            th
+              input(id='select-all', type='checkbox',
+                    data-toggle='tooltip', title='Select all',
+                    style='visibility:hidden')
+              label(for='select-all', style='font-weight: normal; display: none;'
+                    id='select-all-label') Select all
+            th(class='right', id='queue-buttons')
+              div(class='input-group input-group-md')
+                button(class='btn btn-default', type='button', id='shuffle',
+                       data-toggle='tooltip', data-placement='top',
+                       title='Shuffle')
+                  span(id='shuffle-icon', class='glyphicon glyphicon-random')
+                button(class='btn btn-default', type='button', id='send-to-top',
+                       data-toggle='tooltip', data-placement='top',
+                       title='Send to top')
+                  span(id='send-to-top-icon', class='glyphicon glyphicon-chevron-up')
+                button(class='btn btn-default', type='button', id='delete-track',
+                       data-toggle='tooltip', data-placement='top',
+                       title='Delete')
+                  span(id='delete-track-icon', class='glyphicon glyphicon-remove')
+      div(class='panel-body')
+        div(id='video-queue', class='jub-list')
 
-  div(class='panel-body')
-    div(id='video-queue', class='jub-list')
+  div(class="tab-pane active" id="settings-tab")
+    div(class='panel panel-default', id='settings-panel')
+      div(class='panel-body')
+        input(id='requeue-videos', type='checkbox')
+        label(for='requeue-videos') Requeue videos when they finish
 
 script.
 
@@ -43,10 +56,13 @@ script.
   function update_select_all() {
     if ($('#video-queue li input:checkbox').length > 0) {
       $('#select-all').css('visibility', 'visible');
+      $("label[for='select-all']").show();
     } else {
       $('#select-all').css('visibility', 'hidden');
+      $("label[for='select-all']").hide();
     }
     $('#select-all').prop('checked', false);
+    $('#select-all-label').text('Select all (' + my_queue.length + ')');
   }
 
   function selected_tracks() {
@@ -76,13 +92,23 @@ script.
     })
   }
 
+  $('#queue-navtabs a').click(function (e) {
+    $(this).tab('show');
+    $('#video-queue').trigger('redraw_items');
+  })
+
+  $('#requeue-videos').click(function (e) {
+    var data = { requeueVideos: this.checked };
+    socket.emit('user update preferences', get_username(), data);
+  });
+
   function new_queue_li(video_obj, title_width) {
     var li = $('<li>').addClass('queue-item');
     var title_span = $('<span>').addClass('track');
     var time_span = $('<span>').addClass('duration');
     var chk = $('<input>').attr('type', 'checkbox').addClass('queue-chk')
 
-    // Set initial state.
+    // Set initial checkbox state.
     chk.val($(this).is(':checked'));
 
     // The 'delete' and 'send to top' buttons only appear if a track is selected
@@ -131,7 +157,7 @@ script.
       $(this).prepend(item);
     }
 
-    $('#queue-label').text("Queue (" + my_queue.length + ")");
+    update_select_all();
 
     setup_shift_click();
   });
@@ -183,6 +209,7 @@ script.
     // Document is loaded so we can populate our video queue.
     console.log('requesting queue state', get_username());
     socket.emit('queue', get_username());
+    $('#queue-navtab-a').click();
     update_queue_buttons();
   });
 

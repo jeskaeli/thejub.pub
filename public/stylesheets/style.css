@@ -70,9 +70,10 @@ body {
 }
 .jub-list li:nth-child(odd) { background: #1C1C1C; }
 
-/* player and queue panel commonalities */
+/* panel commonalities */
 #player-panel,
-#queue-panel {
+#queue-panel,
+#settings-panel {
   border: 0;
   background-color: #111;
   margin-left: auto;
@@ -124,10 +125,9 @@ body {
 #queue-banner {
   background: #111;
 }
-#queue-label {
+#queue-count {
   color: #DDDDEE;
   font-size: 13px;
-  line-height: 2.4;
 }
 /* TODO create class for orange buttons */
 #queue-panel .btn:hover {
@@ -154,6 +154,18 @@ body {
   display: none ;
 }
 
+/* settings panel */
+#settings-panel .panel-body {
+  padding: 10px 5px 5px 5px;
+}
+#settings-panel .panel-body label {
+  font-weight: normal;
+  margin-bottom: 0px;
+}
+#settings-panel input[type=checkbox] {
+  margin: 2px 5px 5px 0px;
+  float: left;
+}
 /* navbars */
 #bottom-nav ul.navbar-nav>li>a,
 #messages li>a {
@@ -199,8 +211,9 @@ body {
 #video-queue li{
   padding: 3px 3px 3px 5px;
 }
-#video-queue .queue-item .title {
+#video-queue .queue-item .track {
   margin-right: 4px;
+  /* float: left; */
 }
 #video-queue .queue-item .duration {
   min-width: 55px;
@@ -209,7 +222,9 @@ body {
 }
 /*TODO*/
 #video-queue .queue-item .queue-chk {
+  margin-top: 3px;
   margin-right: 4px;
+  float: left;
 }
 #queue-context-menu {
   position: absolute;
@@ -218,6 +233,14 @@ body {
 #queue-context-menu .ul {
   background-color: #000;
 }
+#select-all {
+  margin: 10px 3px 10px 0px;
+}
+#select-all-label {
+  position: relative;
+  top: -2px;
+}
+
 
 /* nav tabs */
 .nav-tabs {
