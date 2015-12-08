@@ -18,6 +18,15 @@ script.
   var urlRegex = /^(http:\/\/|https:\/\/)?([a-z0-9][a-z0-9\-]*\.)+[a-z0-9][a-z0-9\-]*[^\s]*$/i;
   var imageRegex = /[^\s]+(\.(jpeg|jpg|png|gif|bmp))$/i;
 
+  function draw_current_users() {
+    $('#jubbin-list').empty();
+    for (user of current_users) {
+      $('#jubbin-list').append(
+        $('<li>').text(user.name).css('color', user.color)
+      );
+    }
+  }
+
   $('#chat-navtabs a').click(function (e) {
     // Show it now so that we can do some polishing on the revealed element
     e.preventDefault();
@@ -25,12 +34,7 @@ script.
 
     // Depending on which tab we're opening, update certain UI elements
     if (e.currentTarget.id == 'jubbin-list-navtab-a') {
-      $('#jubbin-list').empty();
-      for (user of current_users) {
-        $('#jubbin-list').append(
-          $('<li>').text(user.name).css('color', user.color)
-        );
-      }
+      draw_current_users();
     } else {
       $('#messages').trigger('update_scroll');
     }
@@ -39,6 +43,7 @@ script.
   // Message from server saying who's connected
   socket.on('current users', function(users) {
     current_users = users;
+    draw_current_users();
   });
 
   // Scroll chat to bottom if needed
