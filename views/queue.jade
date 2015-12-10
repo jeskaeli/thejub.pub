@@ -1,8 +1,11 @@
 ul(id="queue-navtabs", class="nav nav-tabs")
   li(id="queue-navtab-li", role="presentation")
     a(id="queue-navtab-a", href="#queue-tab", data-toggle='tab') Queue
+  li(id="playlists-navtab-li", role="presentation")
+    a(id="playlists-navtab-a", href="#playlists-tab", data-toggle='tab') Playlists
   li(id="settings-navtab-li", role="presentation", class="active")
     a(id="settings-navtab-a", href="#settings-tab", data-toggle='tab') Settings
+
 div(id="queue-tab-content", class="tab-content")
   div(class="tab-pane" id="queue-tab")
     div(class='panel panel-default', id='queue-panel')
@@ -37,6 +40,19 @@ div(id="queue-tab-content", class="tab-content")
       div(class='panel-body')
         div(id='video-queue', class='jub-list')
 
+  div(class="tab-pane" id="playlists-tab")
+    div(class='panel panel-default', id='playlists-panel')
+      form(class='form-inline', id='playlist-form', action='')
+        table(class='table', id='playlists-banner')
+          tbody
+            tr
+              th
+                div(class='input-group input-group-md')
+                  input(class='form-control', id='playlist-name-input',
+                        autocomplete='off', placeholder='Save sandbox as...')
+      div(class='panel-body')
+        div(id='playlists', class='jub-list')
+
   div(class="tab-pane active" id="settings-tab")
     div(class='panel panel-default', id='settings-panel')
       div(class='panel-body')
@@ -46,6 +62,17 @@ div(id="queue-tab-content", class="tab-content")
 script.
 
   var my_queue = [];
+  var my_playlists = [];
+  var cur_playlist = null; // TODO change to a function and use radio button value
+  // TODO then, when redrawing the queue, show the playlist that's selected
+  // Make sure all updates to playlists are saved
+  // Do we want to save every change to the sandbox? I think so... then
+  // saving the sandbox means renaming the sandbox playlist, instead of sending
+  // up the whole playlist.
+  // When drawing playlists, make sure sandbox is always at the top
+  // Save playlist selection in user preferences; default to sandbox, and change it
+  // when people click the radio buttons, and when saving a new playlist, change it
+  // to the new playlist.
 
   function update_queue_buttons() {
     var dur = 100;
@@ -101,13 +128,31 @@ script.
 
   $('#queue-navtabs a').click(function (e) {
     $(this).tab('show');
-    $('#video-queue').trigger('redraw_items');
+    if (e.currentTarget.id == 'queue-navtab-a') {
+      $('#video-queue').trigger('redraw_items');
+    }
   })
 
   $('#requeue-videos').click(function (e) {
     var data = { requeueVideos: this.checked };
     socket.emit('user update preferences', get_username(), data);
   });
+
+  // TODO include the number of videos and the duration
+  function new_playlist_li(playlist_name) {
+    var li = $('<li>').addClass('playlist-item');
+    //var lbl = $('<label>')
+    var name_span = $('<span>').addClass('playlist-name');
+    name_span.append(document.createTextNode(playlist_name));
+    var radio = $('<input>').addClass('playlist-radio');
+    radio.attr({
+      type: 'radio',
+      name: 'playlist-radios'
+    });
+    li.append(radio);
+    li.append(name_span);
+    return li;
+  }
 
   function new_queue_li(video_obj, title_width) {
     var li = $('<li>').addClass('queue-item');
@@ -169,6 +214,28 @@ script.
     setup_shift_click();
   });
 
+  // Redraw playlists, taking into account the current width of the list
+  // TODO mostly copied from redraw queue
+  $('#playlists').bind('redraw_items',function() {
+    var pad = 84;
+    var title_width = $(this).width() - pad;
+
+    // if scrolling, add some more padding
+    if (this.scrollHeight > $(this).height()) {
+      title_width -= scrollbar_width(); // TODO seems to need a bit more
+    }
+
+    $(this).empty();
+    for (playlist of my_playlists) {
+      var item = new_playlist_li(playlist.name);
+      $(this).prepend(item);
+    }
+    var selected = $('#playlists li input')[0]
+    if (selected) {
+      $(selected).prop('checked', true)
+    }
+  });
+
   function update_queue(queue) {
     if (queue) {
       my_queue = queue;
@@ -178,10 +245,47 @@ script.
     update_queue_buttons();
   };
 
+  function update_playlists(playlists) {
+    if (playlists) {
+      my_playlists = playlists;
+      console.log('updating playlists', playlists);
+      $('#playlists').trigger('redraw_items');
+    }
+  };
+
+  // TODO for these functions, pass the callback into the call to emit()
+
   // Server tells us the contents of the queue
+  // TODO remove
   socket.on('queue', function(queue) {
     update_queue(queue)
   });
+
+  // Server tells us our list of playlists
+  socket.on('playlists', function(playlists) {
+    update_playlists(playlists);
+  });
+
+  // Save sandbox as new playlist
+  $('#playlist-form').submit(function() {
+    var new_playlist_name = $('#playlist-name-input').val();
+    var user = get_username();
+
+    if (user == '') {
+      alert('You must be logged in to save playlists.')
+    } else {
+      var new_playlist = {
+        user: user,
+        name: new_playlist_name,
+        videos: my_queue
+      };
+      console.log('saving playlist');
+      socket.emit('new playlist', new_playlist);
+      $('#playlist-name-input').val('');
+    }
+    return false;
+  });
+
 
   // Select all
   $('#select-all').on('click', function(e) {
@@ -217,8 +321,9 @@ script.
 
   $( document ).ready(function() {
     // Document is loaded so we can populate our video queue.
-    console.log('requesting queue state', get_username());
-    socket.emit('queue', get_username());
+    var user = get_username();
+    socket.emit('queue', user);
+    socket.emit('playlists', user);
     $('#queue-navtab-a').click();
     update_queue_buttons();
   });

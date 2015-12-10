@@ -73,7 +73,8 @@ body {
 /* panel commonalities */
 #player-panel,
 #queue-panel,
-#settings-panel {
+#settings-panel,
+#playlists-panel {
   border: 0;
   background-color: #111;
   margin-left: auto;
@@ -81,18 +82,30 @@ body {
   margin-bottom: 0px;
 }
 #player-panel .panel-body,
-#queue-panel  .panel-body {
+#queue-panel  .panel-body,
+#playlists-panel .panel-body {
   border: 0;
   background-color: #161616;
   padding: 0 0 0 0;
 }
+
 #player-panel .panel-footer,
-#queue-panel  .panel-footer {
+#queue-panel  .panel-footer,
+#playlists-panel .panel-footer {
   font-size: 12px;
 }
 #player-panel th,
-#queue-panel  th {
+#queue-panel  th,
+#playlists-penal th {
   padding: 5px 5px 5px 5px;
+}
+#video-queue,
+#playlists-panel {
+  color: #BBBBCC; /* slightly darker text for queue items */
+}
+#queue-banner,
+#playlists-banner {
+  background: #111;
 }
 
 /* player panel */
@@ -118,17 +131,64 @@ body {
   text-align: right;
 }
 
-/* video queue */
-#video-queue {
-  color: #BBBBCC; /* slightly darker text for queue items */
-}
-#queue-banner {
-  background: #111;
-}
+/* video queue, playlists */
 #queue-count {
   color: #DDDDEE;
   font-size: 13px;
 }
+#video-queue,
+#playlists {
+  overflow-y:auto;
+}
+#video-queue .queue-item *,
+#playlists .playlist-item * {
+  font-weight: normal;
+  padding: 0px 0px 0px 0px;
+}
+#playlists-panel table {
+  margin-bottom: 0px;
+}
+#playlists-panel table>tbody>tr>th {
+  border: 0;
+}
+#video-queue li,
+#playlists li {
+  /* NOTE if you update these spacing values, update lib/queue.js:'redraw_items' */
+  padding: 3px 3px 3px 5px;
+}
+#video-queue .queue-item .track,
+#playlists .playlist-item .playlist-name {
+  margin-right: 4px;
+}
+#video-queue .queue-item .duration {
+  min-width: 55px;
+  text-align: right;
+  float: right;
+}
+
+/*TODO*/
+#video-queue .queue-item .queue-chk,
+#playlists .playlist-item .playlist-radio {
+  margin-top: 3px;
+  margin-right: 4px;
+  float: left;
+}
+#queue-context-menu {
+  position: absolute;
+  display: none;
+}
+#queue-context-menu .ul {
+  background-color: #000;
+}
+#select-all {
+  margin: 10px 3px 10px 0px;
+}
+#select-all-label {
+  position: relative;
+  top: -2px;
+}
+
+
 /* TODO create class for orange buttons */
 #queue-panel .btn:hover {
   background-color: #e6e6e6;
@@ -144,19 +204,16 @@ body {
 #delete-track {
   background-color: #8B0000 ;
   border-color: #8b0000 ;
-  /* float: right ; */
   display: none ;
 }
 #send-to-top {
   background-color: #005D8B ;
   border-color: #005D8B ;
-  /* float: right ; */
   display: none ;
 }
 #send-to-bottom {
   background-color: #886600 ;
   border-color: #886600 ;
-  /* float: right ; */
   display: none ;
 }
 
@@ -204,48 +261,6 @@ body {
   list-style-type: none;
   max-height: 400px;
   overflow-y:auto;
-}
-
-#video-queue {
-  overflow-y:auto;
-}
-#video-queue .queue-item * {
-  font-weight: normal;
-  padding: 0px 0px 0px 0px;
-}
-
-/* NOTE if you update these spacing values, update lib/queue.js:'redraw_items' */
-#video-queue li{
-  padding: 3px 3px 3px 5px;
-}
-#video-queue .queue-item .track {
-  margin-right: 4px;
-  /* float: left; */
-}
-#video-queue .queue-item .duration {
-  min-width: 55px;
-  text-align: right;
-  float: right;
-}
-/*TODO*/
-#video-queue .queue-item .queue-chk {
-  margin-top: 3px;
-  margin-right: 4px;
-  float: left;
-}
-#queue-context-menu {
-  position: absolute;
-  display: none;
-}
-#queue-context-menu .ul {
-  background-color: #000;
-}
-#select-all {
-  margin: 10px 3px 10px 0px;
-}
-#select-all-label {
-  position: relative;
-  top: -2px;
 }
 
 
@@ -329,4 +344,5 @@ body {
 
 .form-control {
   font-size: 13px;
+  font-weight: normal;
 }
