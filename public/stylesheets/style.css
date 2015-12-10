@@ -144,13 +144,19 @@ body {
 #delete-track {
   background-color: #8B0000 ;
   border-color: #8b0000 ;
-  float: right ;
+  /* float: right ; */
   display: none ;
 }
 #send-to-top {
   background-color: #005D8B ;
   border-color: #005D8B ;
-  float: right ;
+  /* float: right ; */
+  display: none ;
+}
+#send-to-bottom {
+  background-color: #886600 ;
+  border-color: #886600 ;
+  /* float: right ; */
   display: none ;
 }
 
@@ -166,6 +172,7 @@ body {
   margin: 2px 5px 5px 0px;
   float: left;
 }
+
 /* navbars */
 #bottom-nav ul.navbar-nav>li>a,
 #messages li>a {

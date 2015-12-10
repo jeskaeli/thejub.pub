@@ -21,14 +21,19 @@ div(id="queue-tab-content", class="tab-content")
                        data-toggle='tooltip', data-placement='top',
                        title='Shuffle')
                   span(id='shuffle-icon', class='glyphicon glyphicon-random')
-                button(class='btn btn-default', type='button', id='send-to-top',
-                       data-toggle='tooltip', data-placement='top',
-                       title='Send to top')
-                  span(id='send-to-top-icon', class='glyphicon glyphicon-chevron-up')
-                button(class='btn btn-default', type='button', id='delete-track',
+                button(class='btn btn-default right', type='button', id='delete-track',
                        data-toggle='tooltip', data-placement='top',
                        title='Delete')
                   span(id='delete-track-icon', class='glyphicon glyphicon-remove')
+                button(class='btn btn-default', type='button', id='send-to-bottom',
+                       data-toggle='tooltip', data-placement='top',
+                       title='Send to bottom')
+                  span(id='send-to-bottom-icon', class='glyphicon glyphicon-chevron-down')
+                button(class='btn btn-default left', type='button', id='send-to-top',
+                       data-toggle='tooltip', data-placement='top',
+                       title='Send to top')
+                  span(id='send-to-top-icon', class='glyphicon glyphicon-chevron-up')
+
       div(class='panel-body')
         div(id='video-queue', class='jub-list')
 
@@ -47,9 +52,11 @@ script.
     if ($('#video-queue li input:checkbox:checked').length > 0) {
       $('#delete-track').fadeIn(dur);
       $('#send-to-top').fadeIn(dur);
+      $('#send-to-bottom').fadeIn(dur);
     } else {
       $('#delete-track').fadeOut(dur);
       $('#send-to-top').fadeOut(dur);
+      $('#send-to-bottom').fadeOut(dur);
     }
   }
 
@@ -186,22 +193,25 @@ script.
 
   // Shuffle
   $('#shuffle').on('click', function(e) {
-    console.log('requesting shuffle');
     socket.emit('shuffle', get_username(), update_queue);
     return false;
   });
 
   // Delete track(s)
   $('#delete-track').on('click', function(e) {
-    console.log('deleting track(s)');
     socket.emit('delete tracks', get_username(), selected_tracks(), update_queue);
     return false;
   });
 
   // Send track(s) to top
   $('#send-to-top').on('click', function(e) {
-    console.log('sending track(s) to top');
     socket.emit('send to top', get_username(), selected_tracks(), update_queue);
+    return false;
+  });
+
+  // Send track(s) to bottom
+  $('#send-to-bottom').on('click', function(e) {
+    socket.emit('send to bottom', get_username(), selected_tracks(), update_queue);
     return false;
   });
 
