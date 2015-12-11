@@ -63,16 +63,20 @@ script.
 
   var my_queue = [];
   var my_playlists = [];
-  var cur_playlist = null; // TODO change to a function and use radio button value
   // TODO then, when redrawing the queue, show the playlist that's selected
   // Make sure all updates to playlists are saved
-  // Do we want to save every change to the sandbox? I think so... then
-  // saving the sandbox means renaming the sandbox playlist, instead of sending
+  //   - enqueue, dequeue, shuffle, send to bottom, send to top, delete
+  //   - this is all back-end stuff... already did enqueue
+  // Saving the sandbox means renaming the sandbox playlist, instead of sending
   // up the whole playlist.
   // When drawing playlists, make sure sandbox is always at the top
   // Save playlist selection in user preferences; default to sandbox, and change it
   // when people click the radio buttons, and when saving a new playlist, change it
   // to the new playlist.
+
+  function selected_playlist() {
+    return $('#playlists li input[name=playlist-radios]:checked').prop('value');
+  }
 
   function update_queue_buttons() {
     var dur = 100;
@@ -129,7 +133,7 @@ script.
   $('#queue-navtabs a').click(function (e) {
     $(this).tab('show');
     if (e.currentTarget.id == 'queue-navtab-a') {
-      $('#video-queue').trigger('redraw_items');
+      $('#video-queue').trigger('redraw');
     }
   })
 
@@ -147,7 +151,8 @@ script.
     var radio = $('<input>').addClass('playlist-radio');
     radio.attr({
       type: 'radio',
-      name: 'playlist-radios'
+      name: 'playlist-radios',
+      value: playlist_name
     });
     li.append(radio);
     li.append(name_span);
@@ -188,7 +193,7 @@ script.
   }
 
   // Redraw queue, taking into account the current width of the list
-  $('#video-queue').bind('redraw_items',function() {
+  $('#video-queue').bind('redraw',function() {
     // 84 = 55 + 13 + 4 + 4 + 5 + 3
     // = duration width + checkbox width + checkbox padding + title margin-right + padding.
     // Can't read this from the page because the elements aren't on the
@@ -204,7 +209,9 @@ script.
     }
 
     $(this).empty();
-    for (video of my_queue) {
+    var pl = selected_playlist();
+    var videos = (my_playlists[pl] || {}).videos || [];
+    for (video of videos) {
       var item = new_queue_li(video, title_width);
       $(this).prepend(item);
     }
@@ -216,7 +223,7 @@ script.
 
   // Redraw playlists, taking into account the current width of the list
   // TODO mostly copied from redraw queue
-  $('#playlists').bind('redraw_items',function() {
+  $('#playlists').bind('redraw',function() {
     var pad = 84;
     var title_width = $(this).width() - pad;
 
@@ -230,7 +237,7 @@ script.
       var item = new_playlist_li(playlist.name);
       $(this).prepend(item);
     }
-    var selected = $('#playlists li input')[0]
+    var selected = $('#playlists li input')[0] // TODO select the on in user preferences
     if (selected) {
       $(selected).prop('checked', true)
     }
@@ -239,17 +246,18 @@ script.
   function update_queue(queue) {
     if (queue) {
       my_queue = queue;
-      $('#video-queue').trigger('redraw_items');
+      $('#video-queue').trigger('redraw');
     }
     update_select_all();
     update_queue_buttons();
   };
 
+  // playlists is an object keyed by playlist name
   function update_playlists(playlists) {
     if (playlists) {
       my_playlists = playlists;
       console.log('updating playlists', playlists);
-      $('#playlists').trigger('redraw_items');
+      $('#playlists').trigger('redraw');
     }
   };
 
@@ -274,13 +282,8 @@ script.
     if (user == '') {
       alert('You must be logged in to save playlists.')
     } else {
-      var new_playlist = {
-        user: user,
-        name: new_playlist_name,
-        videos: my_queue
-      };
-      console.log('saving playlist');
-      socket.emit('new playlist', new_playlist);
+      console.log('saving sandbox as playlist', new_playlist_name);
+      socket.emit('save playlist as', user, new_playlist_name);
       $('#playlist-name-input').val('');
     }
     return false;
