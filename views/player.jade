@@ -50,12 +50,15 @@ script.
       };
       var video_progress = (state.server_time - start_time) / 1000;
       console.log("apply video state", id, video_progress);
-      if (video_progress) {
+      if (id && video_progress) {
+        console.log('loading video');
         player.loadVideoById({
           'videoId': id,
           'startSeconds': video_progress,
           'suggestedQuality': 'large'
         });
+      } else {
+        player.stopVideo();
       }
       update_time_left();
       update_current_dj(state.user, state.user_color);
@@ -130,10 +133,11 @@ script.
 
   function update_time_left() {
     this.time = new Date(1970, 1, 1); // Unix epoch
-    var elem = $('#time-left');
-    var hide = false;
-    var seconds_left = player.getDuration() - player.getCurrentTime();
+    var seconds_left,
+        hide = false,
+        elem = $('#time-left');
     if (player_ready) {
+      seconds_left = player.getDuration() - player.getCurrentTime();
       if (player.getDuration() > 0 && player.getCurrentTime() > 0) {
         this.time.setSeconds(seconds_left);
       } else {
@@ -217,9 +221,16 @@ script.
   // the player should play for six seconds and then stop.
   var done = false;
   function onPlayerStateChange(event) {
+    console.log('player state change to', event.data);
     if (event.data == YT.PlayerState.PAUSED) {
       // TODO does this violate the youtube ToS?
       event.target.playVideo();
+    } else if (event.data == YT.PlayerState.ENDED) {
+      player.clearVideo();
+    } else if (event.data == YT.PlayerState.PLAYING) {
+      if (!my_video_state.id) {
+        player.stopVideo();
+      }
     }
   }
 
