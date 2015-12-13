@@ -174,8 +174,7 @@ body {
 }
 
 /* navbars */
-#bottom-nav ul.navbar-nav>li>a,
-#messages li>span>a {
+.a-link-to-the-past {
   color: #0097AA;
 }
 
