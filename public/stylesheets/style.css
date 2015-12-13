@@ -175,7 +175,7 @@ body {
 
 /* navbars */
 #bottom-nav ul.navbar-nav>li>a,
-#messages li>a {
+#messages li>span>a {
   color: #0097AA;
 }
 
