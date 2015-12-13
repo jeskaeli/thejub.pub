@@ -149,8 +149,8 @@ script.
     // video id was passed in with the event.
     var id = event.video_id;
     var user = get_cookie('username');
-    var playlist = selected_playlist();
-    if (!playlist) {
+    var pl_name = selected_playlist_name();
+    if (!pl_name) {
       console.error('no playlist selected (this should never happen)');
       return;
     }
@@ -178,7 +178,6 @@ script.
       var count = 0;
       var videos_obj = {
         user: user,
-        playlist: playlist
       };
       var done = false;
       $('#omnibox').val('');
@@ -227,13 +226,12 @@ script.
       // Not a playlist; it's a video. Submit it.
       var video_obj = {
         user: get_cookie('username'),
-        playlist: playlist,
         id: id
       }
       youtube_video_specs(video_obj, function(result_obj) {
         if (result_obj.title && result_obj.duration) {
           console.log('submitting video', result_obj);
-          socket.emit('video enqueue', result_obj);
+          socket.emit('video enqueue', user, pl_name, result_obj);
           $('#omnibox').val('');
         } else {
           console.log('failed to find info for video', result_obj.id);
