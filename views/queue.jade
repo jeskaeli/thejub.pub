@@ -129,16 +129,19 @@ script.
     time = new Date(1970, 1, 1); // Unix epoch
     time.setSeconds(video.duration / 1000);
     time_span.text('(' + strftime(tformat, time).trim() + ')');
-
     title_span.text(video.title);
 
+    // TODO this truncate script is slow as shit.
+    // Use Gmail-style table for queue, with "overflow: hidden; white-space: nowrap;" on the div just inside the td. The td has overflow: visible and white-space: nowrap
+    //<td id=":7r" tabindex="-1" class="xY a4W"><div class="xS" role="link"><div class="xT"><div class="y6"><span id=":7t"><b>Projects We Love: Ripple Effect</b></span><span class="y2">&nbsp;-&nbsp;This week in Kickstarter When Sundance announced their official selections this week, we were</span></div></div></div></td>
+    /*
     title_span.truncate({
         width: title_width,
         token: '...',
         side: 'right',
         multiline: false
     });
-
+    */
     return li;
   }
 
