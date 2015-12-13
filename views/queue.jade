@@ -264,6 +264,7 @@ script.
       my_playlists = playlists;
       console.log('updating playlists', playlists);
       $('#playlists').trigger('redraw');
+      $('#video-queue').trigger('redraw');
     }
   };
 
@@ -306,7 +307,7 @@ script.
 
   // Shuffle
   $('#shuffle').on('click', function(e) {
-    socket.emit('shuffle', get_username(), update_queue);
+    socket.emit('shuffle', get_username(), selected_playlist_name());
     return false;
   });
 
