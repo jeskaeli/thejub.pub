@@ -85,24 +85,34 @@ script.
     });
     _.defer(function() {
       var elemMaxWidth = $('#messages > li');
-      $( this ).css( 'width', elemMaxWidth.width() + 'px' );
+      $( this ).css( 'width', (0.9 * elemMaxWidth.width()) + 'px' );
       $( this ).css( 'height', 'auto' );
     }.bind(image))
     return image;
   }
 
   function convertLineToElement(line){
-    var isLink = (urlRegex).test(line);
-    if(isLink) {
-      var isImage = (imageRegex).test( line );
-      if ( isImage && get_cookie('hide-inline-images') != 1) {
-        return makeImage( line );
+    var elem = $('<span>');
+    _.chain(line.split(' ')).map(function(word) {
+      var transformedWord;
+      var isLink = (urlRegex).test(word);
+      if(isLink) {
+        var isImage = (imageRegex).test( word );
+        if ( isImage && get_cookie('hide-inline-images') != 1) {
+          transformedWord = makeImage( word );
+        } else {
+          transformedWord = makeLink( word );
+        }
+        transformedWord.text( transformedWord.text() + " " );
       } else {
-        return makeLink( line );
+        transformedWord = document.createTextNode( word + " ");
       }
-    } else {
-      return document.createTextNode( line );
-    }
+
+      return transformedWord;
+    }).each(function(component){
+      elem.append(component);
+    }).value();
+    return elem;
   };
 
   var new_chat_li = function(msg_obj) {
