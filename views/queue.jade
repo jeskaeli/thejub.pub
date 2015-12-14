@@ -68,11 +68,13 @@ script.
   //   - enqueue, dequeue, shuffle, send to bottom, send to top, delete
   //   - this is all back-end stuff... already did enqueue
   // Saving the sandbox means renaming the sandbox playlist, instead of sending
-  // up the whole playlist.
+  // up the whole playlist. DONE
   // When drawing playlists, make sure sandbox is always at the top
   // Save playlist selection in user preferences; default to sandbox, and change it
   // when people click the radio buttons, and when saving a new playlist, change it
   // to the new playlist.
+  // Change rotate_videos so that it reads from the top of the current playlist
+  // Change video rotation so that it doesn't pop videos off of playlists
 
   function selected_playlist_name() {
     return $('#playlists li input[name=playlist-radios]:checked').prop('value');
@@ -290,7 +292,7 @@ script.
       alert('You must be logged in to save playlists.')
     } else {
       console.log('saving sandbox as playlist', new_playlist_name);
-      socket.emit('save playlist as', user, new_playlist_name);
+      socket.emit('save sandbox as', user, new_playlist_name);
       $('#playlist-name-input').val('');
     }
     return false;
