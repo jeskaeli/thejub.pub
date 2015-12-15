@@ -63,17 +63,19 @@ script.
 
   var my_queue = [];
   var my_playlists = [];
-  // Make sure all updates to playlists are saved
-  //   - enqueue, dequeue, shuffle, send to bottom, send to top, delete
-  //   - this is all back-end stuff... already did enqueue
-  // Saving the sandbox means renaming the sandbox playlist, instead of sending
-  // up the whole playlist. DONE
-  // When drawing playlists, make sure sandbox is always at the top
-  // Save playlist selection in user preferences; default to sandbox, and change it
-  // when people click the radio buttons, and when saving a new playlist, change it
-  // to the new playlist.
-  // Change rotate_videos so that it reads from the top of the current playlist
-  // Change video rotation so that it doesn't pop videos off of playlists
+  var prefs_selected_playlist = null;
+
+  // TODO
+  //   When drawing playlists, make sure sandbox is always at the top
+  //   Save playlist selection in user preferences; default to sandbox, and change it
+  //   when people click the radio buttons, and when saving a new playlist, change it
+  //   to the new playlist.
+  //   Also make server send user preferences message on user load (instead of using
+  //   a client callback)
+  //   Change rotate_videos so that it reads from the top of the current playlist
+  //   Change video rotation so that it doesn't pop videos off of playlists
+  //   Add button to delete playlist
+  //   Maybe make omnibox simply "rename", and add a "create new playlist" button. yes
 
   function selected_playlist_name() {
     return $('#playlists li input[name=playlist-radios]:checked').prop('value');
@@ -247,21 +249,20 @@ script.
       var item = new_playlist_li(playlist.name);
       $(this).prepend(item);
     }
-    var selected = $('#playlists li input')[0] // TODO select the on in user preferences
-    if (selected) {
-      $(selected).prop('checked', true)
+    console.log($('#playlists li input'));
+    var selected;
+    var playlists = $('#playlists li input');
+    if (prefs_selected_playlist) {
+      selected = $(playlists).filter(function() {
+        return this.value == prefs_selected_playlist
+      });
     }
+    if (!selected) {
+      selected = playlists[0];
+    }
+    console.log('selected', selected);
+    $(selected).prop('checked', true)
   });
-
-    /*
-    function update_queue(queue) {
-      if (queue) {
-        my_queue = queue;
-        $('#video-queue').trigger('redraw');
-      }
-      update_select_all();
-      update_queue_buttons();
-    };*/
 
   // playlists is an object keyed by playlist name
   function update_playlists(playlists) {
@@ -275,7 +276,14 @@ script.
     }
   };
 
-  // TODO for these functions, pass the callback into the call to emit()
+  // TODO this needs to get called on user load
+  socket.on('preferences', function(preferences) {
+    console.log('received prefs', preferences);
+    if (_.has(preferences, 'selectedPlaylist')) {
+      prefs_selected_playlist = preferences.selectedPlaylist;
+      $('#playlists').trigger('redraw');
+    }
+  });
 
   // Server tells us our list of playlists
   socket.on('playlists', function(playlists) {
