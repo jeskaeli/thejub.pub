@@ -108,7 +108,9 @@ script.
       $("label[for='select-all']").hide();
     }
     $('#select-all').prop('checked', false);
-    $('#select-all-label').text('Select all (' + my_queue.length + ')');
+    $('#select-all-label').text(
+      'Select all (' + selected_playlist().videos.length + ')'
+      );
   }
 
   function selected_tracks() {
@@ -251,14 +253,15 @@ script.
     }
   });
 
-  function update_queue(queue) {
-    if (queue) {
-      my_queue = queue;
-      $('#video-queue').trigger('redraw');
-    }
-    update_select_all();
-    update_queue_buttons();
-  };
+    /*
+    function update_queue(queue) {
+      if (queue) {
+        my_queue = queue;
+        $('#video-queue').trigger('redraw');
+      }
+      update_select_all();
+      update_queue_buttons();
+    };*/
 
   // playlists is an object keyed by playlist name
   function update_playlists(playlists) {
@@ -267,16 +270,12 @@ script.
       console.log('updating playlists', playlists);
       $('#playlists').trigger('redraw');
       $('#video-queue').trigger('redraw');
+      update_select_all();
+      update_queue_buttons();
     }
   };
 
   // TODO for these functions, pass the callback into the call to emit()
-
-  // Server tells us the contents of the queue
-  // TODO remove
-  socket.on('queue', function(queue) {
-    update_queue(queue)
-  });
 
   // Server tells us our list of playlists
   socket.on('playlists', function(playlists) {
@@ -335,9 +334,8 @@ script.
   });
 
   $( document ).ready(function() {
-    // Document is loaded so we can populate our video queue.
+    // Document is loaded so we can ask for our playlists.
     var user = get_username();
-    socket.emit('queue', user);
     socket.emit('playlists', user);
     $('#queue-navtab-a').click();
     update_queue_buttons();
